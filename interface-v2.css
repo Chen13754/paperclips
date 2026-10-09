@@ -89,16 +89,30 @@
     padding: 0;
   }
 
-  #mobile 
-  {
-    display: block;
-  }
-
-  #page 
-  {
-    display: none;
-  }
 }
+
+#saveToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  font: 13px Arial, sans-serif;
+}
+
+#saveToolbar button {
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+#saveToolbar a { color: #333; }
+#saveStatus { flex-basis: 100%; }
+#saveStatus:empty { display: none; }
+
+/* Keep the original shop links below the new toolbar. */
+#consoleDiv { position: relative; }
 
 
 /* ############# MOBILE TAKEOVER ############## */

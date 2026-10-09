@@ -16,6 +16,14 @@
     </head>
     
     <body>
+
+    <nav id="saveToolbar" aria-label="文件存档">
+        <button type="button" class="button2" id="exportSave">导出存档</button>
+        <button type="button" class="button2" id="importSave">导入存档</button>
+        <input type="file" id="saveFile" accept=".json,application/json" hidden>
+        <a href="migrate.html">原网页进度迁移</a>
+        <span id="saveStatus" role="status" aria-live="polite"></span>
+    </nav>
         
 <!--     <audio id="threnody1">
         <source src="test.mp3" type="audio/mpeg">
@@ -943,7 +951,8 @@
         <script type="text/javascript" src="combat-v3.js"></script>     
         <script type="text/javascript" src="globals-v3.js"></script>      
         <script type="text/javascript" src="projects-v3.js"></script>   
-        <script type="text/javascript" src="main-v3.js"></script>
+<script type="text/javascript" src="main-v3.js"></script>
+<script src="save-files.js"></script>
 <!--客服 开始-->
 <script src="//g8hh.com/static/js/jquery.min.js"></script>
 <link rel="stylesheet" href="//g8hh.com/static/css/kf.css" type="text/css" media="screen" charset="utf-8">

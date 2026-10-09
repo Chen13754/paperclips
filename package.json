@@ -1,0 +1,12 @@
+{
+  "name": "paperclips-file-saves",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/save-files.test.cjs",
+    "test:browser": "node tests/browser.cjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.64.0"
+  }
+}

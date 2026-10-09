@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>迁移原网页存档 · 回形针</title>
+    <style>
+        body { max-width: 760px; margin: 24px auto; padding: 0 16px; font: 16px/1.7 system-ui, sans-serif; color: #222; }
+        h1 { font-size: 24px; } h2 { font-size: 20px; margin-top: 28px; }
+        a { color: #245599; } li { margin-bottom: 10px; }
+        textarea { box-sizing: border-box; width: 100%; height: 140px; font: 13px/1.5 monospace; }
+        button { padding: 10px 16px; min-height: 44px; margin: 8px 0; font-size: 15px; }
+        #copyStatus { margin-left: 8px; } code { overflow-wrap: anywhere; }
+    </style>
+</head>
+<body>
+    <p><a href="index2.html">← 返回游戏</a></p>
+    <h1>把原网页进度带到新版</h1>
+    <p>只需迁移一次。下面的脚本在<strong>原游戏页面</strong>中保存当前进度并下载 JSON 文件，不上传进度、不删除原存档，也不安装插件。之后在新版点击「导入存档」即可。</p>
+    <p>请使用<strong>原来玩游戏的浏览器</strong>打开 <a href="https://g1tyx.github.io/paperclips/index2.html" target="_blank" rel="noopener">原游戏</a>，先确认其中显示的是你要保留的进度。不同设备的旧进度分别导出，由你选择要继续的一份。</p>
+
+    <h2>电脑：在原页面执行一次</h2>
+    <ol>
+        <li>复制下方脚本，在原游戏页面按 <kbd>Ctrl</kbd>＋<kbd>Shift</kbd>＋<kbd>J</kbd> 打开浏览器控制台。</li>
+        <li>粘贴并按回车，按浏览器提示确认粘贴操作。脚本会下载带日期的存档文件。</li>
+        <li>打开<a href="index2.html">新版游戏</a>，点击「导入存档」，选择下载的文件。</li>
+    </ol>
+
+    <h2>安卓 Chrome／Edge：使用脚本书签</h2>
+    <ol>
+        <li>先把本页加入书签，名称改为「回形针导出」。</li>
+        <li>复制下方脚本，编辑这个书签，把网址<strong>完整替换</strong>为脚本。开头必须保留 <code>javascript:</code>，然后保存。</li>
+        <li>打开原游戏页面，确认进度。在地址栏输入「回形针导出」，点击带书签标记的匹配项；不要进行搜索。</li>
+        <li>在浏览器下载记录或系统「下载」文件夹中找到 JSON 文件，再到新版点击「导入存档」。</li>
+    </ol>
+    <p>脚本书签的支持情况取决于浏览器；如被禁用，请保留原页面和存档，不要清除浏览器数据。</p>
+
+    <label for="migrationCode">一次性导出脚本（完整复制）</label>
+    <textarea id="migrationCode" readonly spellcheck="false"></textarea>
+    <button type="button" id="copyMigration">复制脚本</button>
+    <span id="copyStatus" role="status" aria-live="polite"></span>
+
+    <h2>之后怎样在两台设备间继续玩</h2>
+    <p>在设备 A 点击「导出存档」→ 通过聊天工具或文件传输把 JSON 发到设备 B → 在设备 B 打开新版，点击「导入存档」。文件名带保存日期和时间，方便你选择最新的一份。</p>
+    <p>新版仍会在本浏览器自动保存进度。刷新后继续玩本地进度；跨设备接力需要手动导入文件。存档只存在你的浏览器与导出的文件中。</p>
+    <script src="migrate.js"></script>
+</body>
+</html>

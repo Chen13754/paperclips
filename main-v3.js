@@ -4698,7 +4698,8 @@ function refresh() {
 
 // SAVES AND LOADS
 
-function save() {
+// Collect the existing save format without writing browser storage.
+function getSaveSnapshot() {
     
     var projectsUses = [];
     var projectsFlags = [];
@@ -4978,12 +4979,21 @@ for(var i=0; i < activeProjects.length; i++){
     
         }
     
-    localStorage.setItem("saveGame",JSON.stringify(saveGame));
-    localStorage.setItem("saveProjectsUses",JSON.stringify(projectsUses));
-    localStorage.setItem("saveProjectsFlags",JSON.stringify(projectsFlags));
-    localStorage.setItem("saveProjectsActive",JSON.stringify(projectsActive));
-    localStorage.setItem("saveStratsActive",JSON.stringify(stratsActive));
+    return {
+        saveGame: saveGame,
+        saveProjectsUses: projectsUses,
+        saveProjectsFlags: projectsFlags,
+        saveProjectsActive: projectsActive,
+        saveStratsActive: stratsActive
+    };
     
+}
+
+function save() {
+    var snapshot = getSaveSnapshot();
+    Object.keys(snapshot).forEach(function(key) {
+        localStorage.setItem(key, JSON.stringify(snapshot[key]));
+    });
 }
 
 function save1() {
