@@ -10,7 +10,7 @@
         a { color: #245599; } li { margin-bottom: 10px; }
         textarea { box-sizing: border-box; width: 100%; height: 140px; font: 13px/1.5 monospace; }
         button { padding: 10px 16px; min-height: 44px; margin: 8px 0; font-size: 15px; }
-        #copyStatus { margin-left: 8px; } code { overflow-wrap: anywhere; }
+        #copyStatus { display: block; } code { overflow-wrap: anywhere; }
     </style>
 </head>
 <body>
@@ -22,27 +22,48 @@
     <h2>电脑：在原页面执行一次</h2>
     <ol>
         <li>复制下方脚本，在原游戏页面按 <kbd>Ctrl</kbd>＋<kbd>Shift</kbd>＋<kbd>J</kbd> 打开浏览器控制台。</li>
-        <li>粘贴并按回车，按浏览器提示确认粘贴操作。脚本会下载带日期的存档文件。</li>
+        <li>粘贴并按回车，按浏览器提示确认粘贴操作。原游戏上会出现「原网页存档导出」面板，点击其中的「导出存档」下载文件。</li>
         <li>打开<a href="index2.html">新版游戏</a>，点击「导入存档」，选择下载的文件。</li>
     </ol>
 
-    <h2>安卓 Chrome／Edge：使用脚本书签</h2>
+    <h2>安卓 Chrome：在原游戏地址栏执行</h2>
+    <p>原游戏已勾选「桌面版网站」也可以按下面操作；这个选项不会自动运行导出脚本。新版游戏无需勾选该选项。</p>
+    <ol>
+        <li>点击下方「安卓：复制脚本正文」。</li>
+        <li>回到<strong>有你进度的原游戏标签页</strong>，点击地址栏，清空原网址。</li>
+        <li><strong>手动逐字输入</strong> <code>javascript:</code>（英文半角冒号），再在其后粘贴刚才复制的正文。不要用「粘贴并前往」。</li>
+        <li>确认地址栏开头是 <code>javascript:void(</code>，点击键盘「前往／回车」。若变成搜索结果，请返回原游戏，重新检查前缀。</li>
+        <li>原游戏上应立即出现「脚本已执行，正在加载导出工具……」，随后显示「工具已就绪」。点击面板中的「导出存档」。</li>
+        <li>在下载记录或系统「下载」文件夹中找到 JSON 文件，再到新版点击「导入存档」。</li>
+    </ol>
+    <p>Chrome 会过滤粘贴内容开头的 <code>javascript:</code>，所以这里将手动输入的前缀与复制的正文分开。<a href="https://chromium.googlesource.com/chromium/src/+/81e2250b60d4a6d863864249cc2f1da97669f03d" target="_blank" rel="noopener">Chromium 的相关说明</a>。</p>
+
+    <label for="migrationCode">一次性导出脚本（书签／电脑用完整版本）</label>
+    <textarea id="migrationCode" readonly spellcheck="false"></textarea>
+    <button type="button" id="copyMigrationBody">安卓：复制脚本正文</button>
+    <button type="button" id="copyMigration">复制完整脚本</button>
+    <span id="copyStatus" role="status" aria-live="polite"></span>
+
+    <h2>也可使用脚本书签</h2>
     <ol>
         <li>先把本页加入书签，名称改为「回形针导出」。</li>
-        <li>复制下方脚本，编辑这个书签，把网址<strong>完整替换</strong>为脚本。开头必须保留 <code>javascript:</code>，然后保存。</li>
+        <li>点击「复制完整脚本」，编辑这个书签，把网址<strong>完整替换</strong>为脚本。开头必须保留 <code>javascript:</code>，然后保存。之前建过书签的，也需要替换为这次的新脚本。</li>
         <li>打开原游戏页面，确认进度。在地址栏输入「回形针导出」，点击带书签标记的匹配项；不要进行搜索。</li>
-        <li>在浏览器下载记录或系统「下载」文件夹中找到 JSON 文件，再到新版点击「导入存档」。</li>
+        <li>在出现的导出面板中点击「导出存档」。</li>
     </ol>
-    <p>脚本书签的支持情况取决于浏览器；如被禁用，请保留原页面和存档，不要清除浏览器数据。</p>
 
-    <label for="migrationCode">一次性导出脚本（完整复制）</label>
-    <textarea id="migrationCode" readonly spellcheck="false"></textarea>
-    <button type="button" id="copyMigration">复制脚本</button>
-    <span id="copyStatus" role="status" aria-live="polite"></span>
+    <h2>仍然没有反应时</h2>
+    <ul>
+        <li><strong>完全没有面板：</strong>脚本入口尚未成功执行，无法据此判断存档是否能下载。可在原游戏地址栏手动输入 <code>javascript:alert(1)</code>，点击前往。正常应弹出数字 1；这个测试不修改存档。</li>
+        <li><strong>面板显示加载失败或一直加载：</strong>脚本已经执行，但工具未加载。检查网络后关闭面板，重新执行。</li>
+        <li><strong>面板已就绪，但下载没出现：</strong>点击「显示存档文本」，全选复制 JSON，传到电脑后保存为 <code>.json</code> 纯文本文件，再到新版导入。</li>
+    </ul>
+    <p>如果连手动输入的测试也没有弹窗，可通过数据线做一次迁移：手机启用「开发者选项 → USB 调试」，连接电脑并允许调试；电脑 Chrome 打开 <code>chrome://inspect/#devices</code>，找到<strong>手机上的原游戏标签页</strong>并点击 Inspect，在它的 Console 中执行上面的完整脚本，再在手机出现的面板中导出。完成后可关闭 USB 调试。<a href="https://developer.chrome.com/docs/devtools/remote-debugging?hl=zh-cn" target="_blank" rel="noopener">Chrome 官方操作说明与设备识别排查</a>。</p>
+    <p>不同安卓浏览器对脚本入口的支持可能不同。已完成浏览器模拟检查，<strong>尚未经过安卓实机验证</strong>。迁移完成前请保留原浏览器数据。</p>
 
     <h2>之后怎样在两台设备间继续玩</h2>
     <p>在设备 A 点击「导出存档」→ 通过聊天工具或文件传输把 JSON 发到设备 B → 在设备 B 打开新版，点击「导入存档」。文件名带保存日期和时间，方便你选择最新的一份。</p>
     <p>新版仍会在本浏览器自动保存进度。刷新后继续玩本地进度；跨设备接力需要手动导入文件。存档只存在你的浏览器与导出的文件中。</p>
-    <script src="migrate.js"></script>
+    <script src="migrate.js?v=2"></script>
 </body>
 </html>

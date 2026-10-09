@@ -188,8 +188,54 @@
         }
     }
 
+    function openMigration(panel) {
+        panel.replaceChildren();
+        var title = root.document.createElement("strong");
+        title.textContent = "原网页存档导出";
+        var status = root.document.createElement("p");
+        status.setAttribute("role", "status");
+        status.textContent = "工具已就绪。点击下方按钮，保存并下载此刻的进度。";
+        var captured = null;
+
+        function button(text, handler) {
+            var element = root.document.createElement("button");
+            element.type = "button";
+            element.textContent = text;
+            element.style.cssText = "font:inherit;min-height:44px;padding:.4em .8em;margin:.2em .4em .2em 0";
+            element.addEventListener("click", handler);
+            return element;
+        }
+        var exportButton = button("导出存档", function () {
+            text.hidden = true;
+            text.value = "";
+            captured = exportFile();
+            status.textContent = captured ? "已发起下载：" + filename(new Date(captured.exportedAt)) +
+                "。若未出现文件，可使用「显示存档文本」。" : "导出失败，请根据弹窗提示处理。";
+        });
+        var text = root.document.createElement("textarea");
+        text.readOnly = true;
+        text.hidden = true;
+        text.setAttribute("aria-label", "存档 JSON 文本");
+        text.style.cssText = "box-sizing:border-box;width:100%;height:8em;font:inherit";
+        var showText = button("显示存档文本", function () {
+            try {
+                var envelope = captured || capture();
+                text.value = JSON.stringify(envelope, null, 2);
+                text.hidden = false;
+                text.focus();
+                text.select();
+                status.textContent = "请长按文本、全选并复制，传到电脑后保存为 " +
+                    filename(new Date(envelope.exportedAt)) + "（纯文本文件）。再在新版导入。";
+            } catch (error) {
+                status.textContent = "无法读取存档：" + error.message;
+            }
+        });
+        var close = button("关闭", function () { panel.remove(); });
+        panel.append(title, status, exportButton, showText, close, text);
+    }
+
     root.PaperclipSaves = { capture: capture, filename: filename, parse: parse,
-        restore: restore, exportFile: exportFile };
+        restore: restore, exportFile: exportFile, openMigration: openMigration };
 
     var exportButton = root.document.getElementById("exportSave");
     if (!exportButton) return; // The same exporter also runs on the original site for migration.

@@ -74,7 +74,8 @@ async function selectFile(page, file, accept) {
             // Game behavior is independent of the upstream analytics/customer-service scripts.
             await ctx.route('**/*', route => {
                 const url = new URL(route.request().url());
-                if (migration && !process.env.PAPERCLIPS_URL && url.href === 'https://chen13754.github.io/paperclips/save-files.js') {
+                if (migration && !process.env.PAPERCLIPS_URL && url.origin === 'https://chen13754.github.io' &&
+                    url.pathname === '/paperclips/save-files.js') {
                     return route.fulfill({ contentType: 'text/javascript', body: fs.readFileSync(path.join(root, 'save-files.js')) });
                 }
                 if (url.origin === pageOrigin || url.origin === local ||
@@ -149,27 +150,74 @@ async function selectFile(page, file, accept) {
         await desktop.goto(new URL('migrate.html', entry).href);
         const code = await desktop.locator('#migrationCode').inputValue();
         assert(code.startsWith('javascript:'));
-        const migrationContext = await context({}, true);
+        assert(!/[\r\n]/.test(code));
+        await desktop.evaluate(() => Object.defineProperty(navigator, 'clipboard', {
+            configurable: true, value: { async writeText(value) { window.__copiedMigration = value; } },
+        }));
+        await desktop.getByRole('button', { name: '安卓：复制脚本正文', exact: true }).click();
+        assert.equal(await desktop.evaluate(() => window.__copiedMigration), code.slice('javascript:'.length));
+        await desktop.getByRole('button', { name: '复制完整脚本', exact: true }).click();
+        assert.equal(await desktop.evaluate(() => window.__copiedMigration), code);
+        const migrationContext = await context({ ...devices['Pixel 7'],
+            userAgent: await desktop.evaluate(() => navigator.userAgent) }, true);
         const legacy = await migrationContext.newPage();
         await legacy.goto(process.env.PAPERCLIPS_URL ? 'https://g1tyx.github.io/paperclips/index2.html' :
             `${local}/legacy.html`, { waitUntil: 'domcontentloaded' });
         await legacy.waitForFunction(() => typeof save === 'function' && document.getElementById('cover').style.display === 'none');
-        await legacy.evaluate(() => { window.__gameIntervals.forEach(clearInterval); clips = 9876; cheatPrestigeU(); });
+        await legacy.evaluate(() => {
+            window.__gameIntervals.forEach(clearInterval);
+            // Approximate Android Desktop site's wide layout; this does not test its native address bar.
+            document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=980');
+            clips = 9876; cheatPrestigeU();
+        });
+        await legacy.waitForFunction(() => innerWidth >= 980);
         assert.equal(await legacy.evaluate(() => typeof getSaveSnapshot), 'undefined');
-        const migrationDownload = legacy.waitForEvent('download');
+        const beforeMigration = await stored(legacy);
+        let migrationDownloads = 0;
+        legacy.on('download', () => migrationDownloads++);
         await legacy.evaluate(code.slice('javascript:'.length));
+        const panel = legacy.locator('#paperclipsMigration');
+        await panel.getByRole('button', { name: '导出存档', exact: true }).waitFor();
+        assert.deepEqual(await stored(legacy), beforeMigration);
+        assert.equal(migrationDownloads, 0);
+        const panelLayout = await panel.boundingBox();
+        const panelViewport = await legacy.evaluate(() => ({ width: innerWidth, height: innerHeight }));
+        assert(panelLayout.x >= 0 && panelLayout.x + panelLayout.width <= panelViewport.width);
+        assert(panelLayout.y >= 0 && panelLayout.y + panelLayout.height <= panelViewport.height);
+        await legacy.evaluate(code.slice('javascript:'.length));
+        assert.equal(await panel.count(), 1);
+        await legacy.screenshot({ path: path.join(output, 'migration-desktop-site.png'), scale: 'css' });
+        await legacy.evaluate(() => { clips = 9877; });
+        const migrationDownload = legacy.waitForEvent('download');
+        await panel.getByRole('button', { name: '导出存档', exact: true }).click();
         const migrated = await migrationDownload;
         const migratedPath = path.join(output, 'migration.json');
         await migrated.saveAs(migratedPath);
         const migratedEnvelope = JSON.parse(fs.readFileSync(migratedPath, 'utf8'));
-        assert.equal(JSON.parse(migratedEnvelope.storage.saveGame).clips, 9876);
+        assert.equal(JSON.parse(migratedEnvelope.storage.saveGame).clips, 9877);
         assert.equal(JSON.parse(migratedEnvelope.storage.savePrestige).prestigeU, 1);
         await mobile.evaluate(data => PaperclipSaves.parse(JSON.stringify(data)), migratedEnvelope);
-        assert.equal(await legacy.evaluate(() => clips), 9876);
-        results.push('Migration bookmarklet exports from unmodified upstream save() without removing original progress');
+        assert.equal(await legacy.evaluate(() => clips), 9877);
+        await panel.getByRole('button', { name: '显示存档文本', exact: true }).click();
+        const textBackup = await panel.getByRole('textbox', { name: '存档 JSON 文本' }).inputValue();
+        assert.deepEqual(JSON.parse(textBackup), migratedEnvelope);
+        await mobile.evaluate(text => PaperclipSaves.parse(text), textBackup);
+        await panel.getByRole('button', { name: '关闭', exact: true }).click();
+        assert.equal(await panel.count(), 0);
+        results.push('Wide touch-screen migration panel waits for a tap, exports latest original-site progress, and offers identical JSON text');
+
+        const beforeFailure = await stored(legacy);
+        await legacy.evaluate(() => { delete window.PaperclipSaves; });
+        await migrationContext.route('**/save-files.js?migration=2', route => route.abort());
+        await legacy.evaluate(code.slice('javascript:'.length));
+        await panel.getByRole('status').filter({ hasText: '导出工具加载失败' }).waitFor();
+        assert.deepEqual(await stored(legacy), beforeFailure);
+        assert.equal(migrationDownloads, 1);
+        results.push('Failed helper load shows a visible error and leaves original save untouched');
 
         assert.deepEqual(errors, []);
-        console.log(JSON.stringify({ url: entry, results, pageErrors: errors, androidPhysicalDevice: false }, null, 2));
+        console.log(JSON.stringify({ url: entry, results, pageErrors: errors,
+            androidPhysicalDevice: false, androidNativeAddressBarTested: false }, null, 2));
     } finally {
         if (browser) await browser.close();
         await new Promise(resolve => server.close(resolve));
