@@ -74,10 +74,13 @@ async function selectFile(page, file, accept) {
             // Game behavior is independent of the upstream analytics/customer-service scripts.
             await ctx.route('**/*', route => {
                 const url = new URL(route.request().url());
-                if (migration && url.href === 'https://chen13754.github.io/paperclips/save-files.js') {
+                if (migration && !process.env.PAPERCLIPS_URL && url.href === 'https://chen13754.github.io/paperclips/save-files.js') {
                     return route.fulfill({ contentType: 'text/javascript', body: fs.readFileSync(path.join(root, 'save-files.js')) });
                 }
-                if (url.origin === pageOrigin || url.origin === local) return route.continue();
+                if (url.origin === pageOrigin || url.origin === local ||
+                    (migration && process.env.PAPERCLIPS_URL && url.origin === 'https://g1tyx.github.io')) {
+                    return route.continue();
+                }
                 return route.abort();
             });
             await ctx.addInitScript(() => {
@@ -148,7 +151,8 @@ async function selectFile(page, file, accept) {
         assert(code.startsWith('javascript:'));
         const migrationContext = await context({}, true);
         const legacy = await migrationContext.newPage();
-        await legacy.goto(`${local}/legacy.html`, { waitUntil: 'domcontentloaded' });
+        await legacy.goto(process.env.PAPERCLIPS_URL ? 'https://g1tyx.github.io/paperclips/index2.html' :
+            `${local}/legacy.html`, { waitUntil: 'domcontentloaded' });
         await legacy.waitForFunction(() => typeof save === 'function' && document.getElementById('cover').style.display === 'none');
         await legacy.evaluate(() => { window.__gameIntervals.forEach(clearInterval); clips = 9876; cheatPrestigeU(); });
         assert.equal(await legacy.evaluate(() => typeof getSaveSnapshot), 'undefined');
