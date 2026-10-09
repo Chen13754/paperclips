@@ -21,11 +21,17 @@ const server = http.createServer((req, res) => {
     const name = new URL(req.url, 'http://localhost').pathname;
     if (name === '/legacy.html') {
         res.setHeader('Content-Type', types['.html']);
-        return res.end(original('index2.html').toString().replace('src="main-v3.js"', 'src="legacy-main-v3.js"'));
+        return res.end(original('index2.html').toString()
+            .replace('src="main-v3.js"', 'src="legacy-main-v3.js"')
+            .replace('href="interface-v2.css"', 'href="legacy-interface.css"'));
     }
     if (name === '/legacy-main-v3.js') {
         res.setHeader('Content-Type', types['.js']);
         return res.end(original('main-v3.js'));
+    }
+    if (name === '/legacy-interface.css') {
+        res.setHeader('Content-Type', types['.css']);
+        return res.end(original('interface-v2.css'));
     }
     const file = path.join(root, name === '/' ? 'index2.html' : name.slice(1));
     const type = types[path.extname(file)];

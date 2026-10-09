@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "test": "node --test tests/save-files.test.cjs tests/quantum.test.cjs",
-    "test:browser": "node tests/browser.cjs"
+    "test:browser": "node tests/browser.cjs",
+    "test:design": "node tests/design.cjs"
   },
   "devDependencies": {
     "playwright-core": "^1.64.0"
