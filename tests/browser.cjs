@@ -207,10 +207,15 @@ async function selectFile(page, file, accept) {
         results.push('Wide touch-screen migration panel waits for a tap, exports latest original-site progress, and offers identical JSON text');
 
         const beforeFailure = await stored(legacy);
-        await legacy.evaluate(() => { delete window.PaperclipSaves; });
-        await migrationContext.route('**/save-files.js?migration=2', route => route.abort());
-        await legacy.evaluate(code.slice('javascript:'.length));
-        await panel.getByRole('status').filter({ hasText: '导出工具加载失败' }).waitFor();
+        assert(await legacy.evaluate(() => delete window.PaperclipSaves));
+        await migrationContext.route('**/save-files.js?migration=load-failure-test', route => route.abort());
+        await legacy.evaluate(code.slice('javascript:'.length).replace('migration=2', 'migration=load-failure-test'));
+        try {
+            await panel.getByRole('status').filter({ hasText: '导出工具加载失败' }).waitFor();
+        } catch (error) {
+            console.error('Migration panel:', await panel.innerText());
+            throw error;
+        }
         assert.deepEqual(await stored(legacy), beforeFailure);
         assert.equal(migrationDownloads, 1);
         results.push('Failed helper load shows a visible error and leaves original save untouched');
