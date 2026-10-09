@@ -53,6 +53,8 @@ for (const stage of ['initial', 'earth', 'space']) {
         }
         const before = JSON.parse(exported.storage.saveGame);
         const after = JSON.parse(roundtrip.storage.saveGame);
+        // Chip values are now derived from ownership when loading an existing save.
+        before.qChips.forEach(chip => { chip.value = chip.active === 1 ? 1 : 0; });
         // Original refresh() clears an in-progress battle/tournament and uses x as a loop counter.
         for (const field of Object.keys(before).filter(field => !['x', 'battles', 'tourneyInProg'].includes(field))) {
             assert.deepEqual(after[field], before[field], field);

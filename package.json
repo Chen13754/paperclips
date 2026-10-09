@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test tests/save-files.test.cjs",
+    "test": "node --test tests/save-files.test.cjs tests/quantum.test.cjs",
     "test:browser": "node tests/browser.cjs"
   },
   "devDependencies": {

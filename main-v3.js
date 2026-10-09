@@ -827,15 +827,16 @@ qChips.push(qChip9);
 qChipsElements.push(document.getElementById("qChip9"));
 
 function quantumCompute(){
-    qClock = qClock+.01;
     for (var i = 0; i<qChips.length; i++){
-        qChips[i].value = Math.sin(qClock*qChips[i].waveSeed*qChips[i].active);
+        qChips[i].value = qChips[i].active === 1 ? 1 : 0;
         qChipsElements[i].style.opacity=qChips[i].value; 
     }
 }
 
+quantumCompute();
+
 function qComp(){
-    
+    quantumCompute();
     qFade = 1;
     
     var q = 0;
@@ -4385,10 +4386,7 @@ if (dismantle >= 5) {
     
     btnQcomputeElement.style.display="none";
     
-   for (var i = 0; i<qChips.length; i++){
-        qChips[i].value = .5;
-        qChipsElements[i].style.opacity=qChips[i].value;
-        }
+    quantumCompute();
     
     if (endTimer4==10){
         wire = wire+1; 
@@ -4602,7 +4600,7 @@ window.setInterval(function(){
 // Saving and Loading
 
 function refresh() {
-    
+    quantumCompute();
     
     //DEBUG
     

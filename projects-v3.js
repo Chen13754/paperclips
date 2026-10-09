@@ -1185,6 +1185,7 @@ var project51 = {
         qChipCost = qChipCost + 5000;
         project51.priceTag = "(" + qChipCost + " 操作)";
         qChips[nextQchip].active = 1;
+        quantumCompute();
         nextQchip = nextQchip + 1;
         displayMessage("Photonic chip added");
         if (nextQchip<qChips.length){

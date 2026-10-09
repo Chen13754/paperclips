@@ -87,9 +87,11 @@ async function selectFile(page, file, accept) {
             await ctx.addInitScript(() => {
                 const original = window.setInterval;
                 window.__gameIntervals = [];
+                window.__gameTimerCallbacks = [];
                 window.setInterval = function (...args) {
                     const id = original.apply(this, args);
                     window.__gameIntervals.push(id);
+                    window.__gameTimerCallbacks.push({ callback: args[0], delay: args[1] });
                     return id;
                 };
             });
@@ -219,6 +221,81 @@ async function selectFile(page, file, accept) {
         assert.deepEqual(await stored(legacy), beforeFailure);
         assert.equal(migrationDownloads, 1);
         results.push('Failed helper load shows a visible error and leaves original save untouched');
+
+        const legacyFile = { name: 'legacy-save-v1.json', mimeType: 'application/json',
+            buffer: fs.readFileSync(path.join(__dirname, 'fixtures', 'legacy-save-v1.json')) };
+        for (const [page, label] of [[desktop, 'desktop'], [mobile, 'mobile']]) {
+            await page.goto(entry, { waitUntil: 'domcontentloaded' });
+            await ready(page);
+            const imported = page.waitForEvent('framenavigated', { predicate: frame => frame === page.mainFrame() });
+            await selectFile(page, legacyFile, true);
+            await imported;
+            await ready(page);
+            assert.equal(await page.evaluate(() => nextQchip), 3);
+            assert.deepEqual(await page.evaluate(() => [prestigeU, prestigeS]), [2, 1]);
+            // Show the computing panel in this synthetic fixture without advancing any game timers.
+            await page.evaluate(() => { compFlag = 1; buttonUpdate(); updateStats(); });
+            const colors = await page.evaluate(() => qChipsElements.map(element => ({
+                opacity: getComputedStyle(element).opacity,
+                color: getComputedStyle(element).backgroundColor,
+            })));
+            colors.forEach((color, index) => {
+                assert.equal(color.opacity, index < 3 ? '1' : '0');
+                assert.equal(color.color, 'rgb(0, 0, 0)');
+            });
+            const oldOps = await page.evaluate(() => standardOps);
+            await page.locator('#btnQcompute').click();
+            assert.equal(await page.evaluate(() => standardOps), oldOps + 1080);
+            await page.evaluate(() => {
+                for (const clock of [0, 100, 1e8]) { qClock = clock; quantumCompute(); }
+                standardOps = 40000; operations = 40000;
+                manageProjects(); buttonUpdate(); updateStats();
+            });
+            await page.locator('#projectButton51').click();
+            assert.deepEqual(await page.evaluate(() => ({ count: nextQchip, ops: standardOps,
+                cost: qChipCost, value: qChips[3].value, opacity: qChipsElements[3].style.opacity })),
+            { count: 4, ops: 15000, cost: 30000, value: 1, opacity: '1' });
+            await page.locator('#qComputing').screenshot({ path: path.join(output, `quantum-${label}.png`) });
+            const quantumDownload = page.waitForEvent('download');
+            await page.getByRole('button', { name: '导出存档', exact: true }).click();
+            const quantumFile = await quantumDownload;
+            const quantumPath = path.join(output, `quantum-${label}.json`);
+            await quantumFile.saveAs(quantumPath);
+            const quantumSave = JSON.parse(fs.readFileSync(quantumPath, 'utf8'));
+            assert.equal(quantumSave.version, 1);
+            assert.deepEqual(JSON.parse(quantumSave.storage.saveGame).qChips.map(chip => chip.value),
+                [1, 1, 1, 1, 0, 0, 0, 0, 0, 0]);
+            await page.reload({ waitUntil: 'domcontentloaded' });
+            await ready(page);
+            assert.equal(await page.evaluate(() => nextQchip), 4);
+            assert.deepEqual(await page.evaluate(() => qChips.map(chip => chip.value)),
+                [1, 1, 1, 1, 0, 0, 0, 0, 0, 0]);
+            const dismantled = await page.evaluate(() => {
+                const tick = window.__gameTimerCallbacks.find(timer => timer.delay === 10).callback;
+                qChips.forEach(chip => { chip.active = 1; });
+                dismantle = 5;
+                const states = [];
+                for (const time of [0, 10, 60, 100, 130, 150, 160, 165, 169, 172, 174, 250]) {
+                    endTimer4 = time;
+                    tick();
+                    states.push({ time, values: qChips.map(chip => chip.value),
+                        opacities: qChipsElements.map(element => element.style.opacity),
+                        hidden: qChipsElements.map(element => element.style.display === 'none'),
+                        panelHidden: qComputingElement.style.display === 'none',
+                        buttonHidden: btnQcomputeElement.style.display === 'none' });
+                }
+                return states;
+            });
+            const disappearance = [174, 172, 169, 165, 160, 150, 130, 100, 60, 10];
+            for (const state of dismantled) {
+                assert(state.values.every(value => value === 1));
+                assert(state.opacities.every(opacity => opacity === '1'));
+                assert.deepEqual(state.hidden, disappearance.map(time => state.time >= time));
+                assert.equal(state.panelHidden, state.time >= 250);
+                assert(state.buttonHidden);
+            }
+            results.push(`${label}: old v1 file imports, black chips earn full yield, new purchase is immediate, v1 export/reload and ending sequence work`);
+        }
 
         assert.deepEqual(errors, []);
         console.log(JSON.stringify({ url: entry, results, pageErrors: errors,
