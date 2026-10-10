@@ -183,54 +183,89 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 310 / 150; bac
 }
 @media (prefers-reduced-motion: reduce) { .pulsate { animation: none; } }
 
-/* Mobile view wrappers never override the engine's inline unlock conditions. */
+/* Mobile wrappers never override the engine's inline unlock conditions. */
 .mobile-panels, .mobile-tabs, .mobile-metrics { display: none; }
 @media (min-width: 700px) { .power-breakdown > summary { display: none; } }
 @media (max-width: 699px) {
-  .mobile-ui { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .mobile-ui { padding: 12px 16px calc(76px + env(safe-area-inset-bottom, 0px)); }
   .mobile-ui #gameGrid { display: none; }
-  .mobile-ui .overview { gap: 8px; padding: 12px 0; }
-  .mobile-ui #topDiv { display: block; }
+  .mobile-ui .site-header { align-items: center; gap: 8px; padding-bottom: 10px; }
+  .mobile-ui .brand h1 { margin-bottom: 2px; }
+  .mobile-ui #saveToolbar { width: auto; grid-template-columns: repeat(2, auto); gap: 6px; }
+  .mobile-ui #saveToolbar button { min-width: 48px; padding: 8px 7px; }
+  .mobile-ui #saveToolbar:has(#saveStatus:not(:empty)) { display: contents; }
+  .mobile-ui #saveStatus { flex-basis: 100%; max-width: 100%; }
+  .mobile-ui .overview { display: block; padding: 0 0 14px; }
+  .mobile-ui #topDiv { display: none; }
   .mobile-ui summary { cursor: pointer; min-height: 44px; padding: 9px 0; line-height: 1.6; }
   .mobile-ui summary:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
-  .mobile-ui .mobile-total { border-bottom: 1px solid var(--line); }
-  .mobile-ui .mobile-total .clip-count { margin: 12px 0; }
-  .mobile-ui #consoleDiv { min-height: 0; padding: 12px 16px 2px; }
+  .mobile-ui #consoleDiv { min-height: 0; padding: 10px 12px 0; }
   .mobile-ui .mobile-history summary { color: #bcbcb7; font-size: 14px; }
   .mobile-ui .mobile-history[open] { padding-bottom: 12px; }
   .mobile-ui .mobile-history .consoleOld { padding-top: 4px; }
-  .mobile-ui .mobile-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; position: sticky; top: 0; z-index: 4; background: var(--paper); padding: 8px 0 12px; }
-  .mobile-ui .mobile-metric { min-width: 0; border: 1px solid var(--ink); padding: 8px 10px; }
+  .mobile-ui .mobile-total .clip-count { margin: 12px 0; }
+  .mobile-ui .mobile-total #prestigeDiv { color: #bcbcb7; }
+  .mobile-ui .mobile-help { margin: 24px 0 0; border-top: 1px solid var(--line); }
+  .mobile-ui .mobile-help a { display: inline-block; padding: 8px 0; min-height: 44px; }
+  .mobile-ui .mobile-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 8px; position: sticky; top: 0; z-index: 4; background: var(--paper); padding: 8px 0; }
+  .mobile-ui .mobile-metric { min-width: 0; border: 1px solid var(--ink); padding: 6px 10px; }
   .mobile-ui .metric-rate { background: #fff0b3; }
   .mobile-ui .metric-label { display: block; font-size: 16px; }
   .mobile-ui .metric-value { display: block; font-size: 24px; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-  .mobile-ui .mobile-panels { display: block; padding-top: 8px; }
+  .mobile-ui .metric-secondary { padding: 6px 0 0; border: 0; }
+  .mobile-ui .metric-secondary .metric-value { font-size: 16px; line-height: 1.4; }
+  .mobile-ui .mobile-panels { display: block; }
   .mobile-ui .mobile-panel { min-width: 0; scroll-margin-top: calc(var(--mobile-metrics-height, 96px) + 12px); }
-  .mobile-ui .mobile-panel > * { margin-bottom: 20px; }
-  .mobile-ui .section-heading { margin-bottom: 12px; }
-  .mobile-ui #btnMakePaperclip { margin-bottom: 16px; }
+  .mobile-ui .mobile-panel > .section-heading { margin: 0 0 12px; }
+  .mobile-ui .mobile-detail > .section-heading { font-size: 25px; margin-top: 12px; }
+  .mobile-ui .mobile-detail > .section-heading::before { flex-basis: 6px; }
+  .mobile-ui #mobile-heading-projects::before { background: var(--yellow); }
+  .mobile-ui #mobile-heading-computing::before, .mobile-ui #mobile-heading-strategy::before { background: var(--blue); }
+  .mobile-ui .mobile-detail .game-column > .section-heading { display: none; }
+  .mobile-ui #projectsDiv > .section-heading { display: none; }
+  .mobile-ui .mobile-card { margin: 0 0 18px; border-top: 1px solid var(--line); padding-top: 10px; }
+  .mobile-ui .mobile-card-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0 12px; margin-bottom: 8px; }
+  .mobile-ui .mobile-card h3 { font-size: 19px; margin: 0; }
+  .mobile-ui .mobile-detail-link { border: 0; border-bottom: 1px solid var(--blue); padding: 8px 0; font-weight: 400; color: var(--blue); }
+  .mobile-ui .mobile-back { border: 1px solid var(--ink); padding: 8px 12px; }
+  .mobile-ui .mobile-return-action { display: block; text-align: left; width: 100%; font-weight: 400; border-color: var(--line); margin: 8px 0 16px; color: var(--blue); }
+  .mobile-ui .mobile-quantum { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; align-items: center; }
+  .mobile-ui .mobile-quantum > .mobile-native:last-child { grid-column: 1 / -1; }
+  .mobile-ui #qCompDisplay { margin: 0; min-height: 0; }
+  .mobile-ui #swarmSliderDiv { margin: 8px 0 0; }
+  .mobile-ui #btnMakePaperclip { margin-bottom: 12px; }
   .mobile-ui #clipsPerSecDiv, .mobile-ui #tothDiv, .mobile-ui .production-rate-original { display: none; }
   .mobile-ui #leftColumn > br, .mobile-ui #compDiv > br { display: none; }
   .mobile-ui #processorDisplay, .mobile-ui #memoryDisplay { padding: 8px 0; }
   .mobile-ui #swarmEngine, .mobile-ui #qComputing { padding-top: 12px; margin: 12px 0; }
-  .mobile-ui #qCompDisplay:empty { display: none; }
   .mobile-ui #qComputing > br { display: none; }
   .mobile-ui .mobile-device > br { display: none; }
-  .mobile-ui .mobile-device > .engineText5 { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .mobile-ui .device-cost { margin: 4px 0; overflow-wrap: anywhere; }
-  .mobile-ui .mobile-device-management { margin: 0 0 12px; border-bottom: 1px solid var(--line); }
-  .mobile-ui .mobile-device-management summary { color: var(--muted); font-size: 16px; }
-  .mobile-ui .mobile-device-management[open] { padding-bottom: 12px; }
+  .mobile-ui .mobile-purchase { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; border-top: 1px solid var(--line); padding: 10px 0; }
+  .mobile-ui .mobile-purchase > .engineText5 { display: contents; }
+  .mobile-ui .mobile-purchase button { text-align: left; width: 100%; }
+  .mobile-ui .mobile-purchase .engineText6 { align-self: center; font-weight: 700; margin: 0; }
+  .mobile-ui .mobile-purchase .device-cost { grid-column: 1 / -1; overflow-wrap: anywhere; }
+  .mobile-ui .mobile-device-label { font-size: 19px; margin: 0 0 4px; }
+  .mobile-ui .mobile-detail-cost { margin-bottom: 8px; }
+  .mobile-ui #probeDiv br { display: none; }
+  .mobile-ui #probeDiv button { display: block; width: 100%; margin: 10px 0 4px; }
+  .mobile-ui .mobile-space-overview { margin-bottom: 4px; }
+  .mobile-ui .mobile-power-overview { margin-bottom: 8px; }
+  .mobile-ui #mobileEarth > .mobile-card { margin-bottom: 0; }
+  .mobile-ui .mobile-device { border-top: 1px solid var(--line); padding-top: 8px; margin-top: 12px; }
   .mobile-ui #powerDiv { margin: 16px 0; padding-top: 12px; }
   .mobile-ui #powerDiv > b:first-child { margin-bottom: 8px; }
   .mobile-ui .power-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; margin-bottom: 12px; }
   .mobile-ui .power-summary > * { overflow-wrap: anywhere; }
   .mobile-ui .power-breakdown { grid-column: 1 / -1; order: 4; }
   .mobile-ui .power-breakdown p { margin-bottom: 8px; }
-  .mobile-ui #farmMultiButtons, .mobile-ui #batteryMultiButtons, .mobile-ui #harvesterMultiButtons, .mobile-ui #wireDroneMultiButtons { margin: 4px 0; }
-  .mobile-ui .power-battery { margin-top: 16px; }
-  .mobile-ui .mobile-tabs { position: fixed; display: flex; inset: auto 0 0; z-index: 5; padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)); background: var(--paper); border-top: 2px solid var(--ink); }
+  .mobile-ui .mobile-match-run { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+  .mobile-ui .mobile-match-run select { width: 100%; }
+  .mobile-ui #tourneyButton { margin-bottom: 0; }
+  .mobile-ui #mobileMatches > .mobile-native > .engineText8 { margin: 4px 0 10px; }
+  .mobile-ui .mobile-tabs { position: fixed; display: flex; inset: auto 0 0; z-index: 5; padding: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px)); background: var(--paper); border-top: 2px solid var(--ink); }
   .mobile-ui .mobile-tabs button { flex: 1 1 0; min-width: 0; padding: 8px 4px; min-height: 48px; border: 0; border-top: 3px solid transparent; background: transparent; font-size: 16px; }
   .mobile-ui .mobile-tabs button[aria-selected="true"] { border-top-color: var(--red); background: #e9e8e0; color: var(--ink); }
+  .mobile-ui #mobile-tab-projects[aria-selected="true"] { border-top-color: var(--yellow); }
   .mobile-ui .mobile-tabs button:focus-visible { outline-offset: -3px; }
 }

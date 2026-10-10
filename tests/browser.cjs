@@ -241,7 +241,7 @@ async function selectFile(page, file, accept) {
             assert.deepEqual(await page.evaluate(() => [prestigeU, prestigeS]), [2, 1]);
             // Show the computing panel in this synthetic fixture without advancing any game timers.
             await page.evaluate(() => { compFlag = 1; buttonUpdate(); updateStats(); });
-            if (label === 'mobile') await page.locator('#mobile-tab-computing').click();
+            if (label === 'mobile') await page.locator('#mobile-tab-production').click();
             const colors = await page.evaluate(() => qChipsElements.map(element => ({
                 opacity: getComputedStyle(element).opacity,
                 color: getComputedStyle(element).backgroundColor,
@@ -263,7 +263,8 @@ async function selectFile(page, file, accept) {
             assert.deepEqual(await page.evaluate(() => ({ count: nextQchip, ops: standardOps,
                 cost: qChipCost, value: qChips[3].value, opacity: qChipsElements[3].style.opacity })),
             { count: 4, ops: 15000, cost: 30000, value: 1, opacity: '1' });
-            if (label === 'mobile') await page.locator('#mobile-tab-computing').click();
+            if (label === 'mobile') await page.locator('#mobile-tab-production').click();
+            if (label === 'mobile') await page.locator('[data-detail="computing"]:visible').click();
             await page.locator('#qComputing').screenshot({ path: path.join(output, `quantum-${label}.png`) });
             const quantumDownload = page.waitForEvent('download');
             await page.getByRole('button', { name: '导出存档', exact: true }).click();

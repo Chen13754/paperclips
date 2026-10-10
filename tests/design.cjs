@@ -11,7 +11,7 @@ const temp = path.join(root, '.cache', 'design-browser');
 fs.mkdirSync(temp, { recursive: true });
 process.env.TEMP = process.env.TMP = process.env.TMPDIR = temp;
 const { chromium } = require('playwright-core');
-const baseline = '7354dd5f85f9f940447d03cec09994cbe9481d8b';
+const baseline = '21a09a9761be9f47755766169c5bc778e624d62b';
 const files = new Map();
 function previous(file) {
     if (!files.has(file)) files.set(file, execFileSync('git', ['show', `${baseline}:${file}`], { cwd: root }));
@@ -37,10 +37,15 @@ async function ready(page) {
 }
 async function tab(page, width, key) {
     if (width >= 700) return;
-    if (await page.locator('#mobile-tab-' + key).getAttribute('aria-selected') === 'true') return;
-    await page.waitForFunction(key => !document.getElementById('mobile-tab-' + key).hidden, key);
-    await page.locator('#mobile-tab-' + key).click();
+    if (await page.locator('body').getAttribute('data-mobile-tab') === key) return;
+    if (key === 'production' || key === 'projects') {
+        await page.locator('#mobile-tab-' + key).click();
+    } else {
+        await page.locator('#mobile-tab-production').click();
+        await page.locator('[data-detail="' + key + '"]:visible').first().click();
+    }
 }
+
 const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige: [prestigeU, prestigeS] }));
 
 (async () => {
@@ -187,7 +192,7 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
                     assert.equal(await page.locator('.mobile-history').getAttribute('open'), null);
                     assert.equal(await page.locator('#mobileStock').textContent(), await page.locator(stage === 'initial' || stage === 'human' || stage === 'trading' ? '#unsoldClips' : '#unusedClipsDisplay').textContent());
                     if (stage === 'earth') {
-                        assert.equal(await page.locator('#powerDiv').evaluate(el => el.closest('#leftColumn') !== null), true);
+                        assert.equal(await page.locator('#powerDiv').evaluate(el => el.closest('#mobile-panel-power') !== null), true);
                         assert((await page.locator('#btnMakeFactory').boundingBox()).y < 844, 'factory purchase in first phone screen');
                     }
                 }
@@ -209,17 +214,22 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
                     assert(Math.abs(layout.projects.top - layout.production.top) < 2);
                 }
                 const screen = `${stage}-${width}.png`;
+                await page.evaluate(() => scrollTo(0, 0));
                 await page.screenshot({ path: path.join(output, screen), fullPage: true });
                 screenshots.push(screen);
                 if (width < 700 && stage !== 'initial') {
-                    const available = await page.locator('#mobileTabs button:not([hidden])').evaluateAll(els => els.map(el => el.id.replace('mobile-tab-', '')));
+                    assert.deepEqual(await page.locator('#mobileTabs button').allTextContents(), ['主控台', '研究']);
+                    const available = ['projects', ...await page.locator('[data-detail]:visible').evaluateAll(els => [...new Set(els.map(el => el.dataset.detail))])];
                     for (const key of available) {
                         await tab(page, width, key);
                         assert(await page.locator('#mobile-panel-' + key).isVisible());
                         assert.equal(await page.locator('.mobile-panel:visible').count(), 1);
                         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
                         assert.deepEqual(await page.locator('button:visible').evaluateAll(els => els.filter(el => el.getBoundingClientRect().height < 43.5).map(el => el.id)), []);
-                        if (width === 390) await page.screenshot({ path: path.join(output, `${stage}-390-${key}.png`), fullPage: true });
+                        if (width === 390) {
+                            await page.evaluate(() => scrollTo(0, 0));
+                            await page.screenshot({ path: path.join(output, `${stage}-390-${key}.png`), fullPage: true });
+                        }
                     }
                     await tab(page, width, 'production');
                 }
@@ -271,6 +281,7 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
             await tab(page, width, 'computing');
             await page.locator('#btnAddProc').click(); await page.locator('#btnAddMem').click();
             assert.deepEqual(await page.evaluate(() => [processors, memory]), [before.processors + 1, before.memory + 1]);
+            await tab(page, width, 'production');
             await page.locator('#btnQcompute').click();
             assert.equal(await page.evaluate(() => standardOps), before.standardOps + 1080);
             await page.evaluate(() => { operations = standardOps = 40000; manageProjects(); buttonUpdate(); });
@@ -278,12 +289,13 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
             await page.locator('#projectButton51').click();
             assert.equal(await page.evaluate(() => nextQchip), 4);
             await page.evaluate(() => { strategyEngineFlag = 1; operations = standardOps = 40000; buttonUpdate(); });
-            await tab(page, width, 'strategy');
+            await tab(page, width, 'production');
             await page.locator('#btnNewTournament').click();
             await page.locator('#stratPicker').selectOption('0');
             await page.locator('#btnRunTournament').click();
             assert.equal(await page.evaluate(() => tourneyInProg), 1);
             await page.evaluate(() => { investmentEngineFlag = 1; funds = 100; buttonUpdate(); });
+            await tab(page, width, 'strategy');
             const bank = await page.evaluate(() => bankroll);
             await page.locator('#btnInvest').click();
             assert.equal(await page.evaluate(() => bankroll), bank + 100);
@@ -300,13 +312,13 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
             const earthContext = await context(fixtures.earth.storage, width);
             const earth = await earthContext.newPage();
             await earth.goto(entry); await ready(earth);
-            await tab(earth, width, 'computing');
+            await tab(earth, width, 'production');
             await earth.evaluate(() => { swarmFlag = 0; harvesterLevel = 200; wireDroneLevel = 200; buttonUpdate(); manageProjects(); });
             assert.equal(await earth.locator('#swarmSliderDiv').isVisible(), false, 'slider stays locked before swarm research');
             await tab(earth, width, 'projects');
             await earth.locator('#projectButton126').click();
             await earth.evaluate(() => buttonUpdate());
-            await tab(earth, width, 'computing');
+            await tab(earth, width, 'production');
             assert.equal(await earth.locator('#swarmSliderDiv').isVisible(), true, 'native research unlocks the slider');
             await earth.locator('#slider').fill('100');
             await earth.evaluate(() => window.__callbacks.find(timer => timer.delay === 10).callback());
@@ -342,9 +354,10 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
         await phone.keyboard.press('Home');
         assert.equal(await phone.locator('#mobile-tab-production').getAttribute('aria-selected'), 'true');
         await phone.keyboard.press('ArrowRight');
-        assert.equal(await phone.locator('#mobile-tab-computing').getAttribute('aria-selected'), 'true');
+        assert.equal(await phone.locator('#mobile-tab-projects').getAttribute('aria-selected'), 'true');
         await phone.evaluate(() => { strategyEngineFlag = 1; buttonUpdate(); });
-        await phone.locator('#mobile-tab-strategy').waitFor({ state: 'visible' });
+        await tab(phone, 390, 'production');
+        await phone.locator('[data-detail="strategy"]:visible').first().waitFor();
         for (const width of [699, 700, 390, 700, 390]) {
             await phone.setViewportSize({ width, height: 844 });
             await pauseFrame(phone);
@@ -353,14 +366,82 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
             assert.equal(await phone.locator('#btnQcompute').count(), 1);
             assert(await phone.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
         }
-        await tab(phone, 390, 'computing');
+        await tab(phone, 390, 'production');
         await phone.evaluate(() => { memory = 100; standardOps = 1000; });
         await phone.locator('#btnQcompute').click();
         assert.equal(await phone.evaluate(() => standardOps), 2080, 'resize keeps exactly one native handler');
         await phone.reload(); await ready(phone);
         assert.equal(await phone.locator('#mobile-tab-production').getAttribute('aria-selected'), 'true');
         await phoneContext.close();
-        results.push('390: hidden-panel production and live metrics, per-tab scrolling, keyboard tabs, native unlock, repeated 699/700 resize and refresh default');
+        results.push('390: hidden-panel production and live metrics, root/detail scrolling, two root tabs, native unlock, repeated 699/700 resize and refresh default');
+
+        // Console buys use the original handlers; bulk/dismantle controls belong
+        // to named detail pages, with live data and a reversible return position.
+        const manageContext = await context(fixtures.earth.storage, 390);
+        const manage = await manageContext.newPage();
+        await manage.goto(entry); await ready(manage);
+        const unchangedStorage = await stored(manage);
+        for (const [button, variable] of [
+            ['btnMakeFactory', 'factoryLevel'], ['btnMakeFarm', 'farmLevel'],
+            ['btnMakeBattery', 'batteryLevel'], ['btnMakeHarvester', 'harvesterLevel'],
+            ['btnMakeWireDrone', 'wireDroneLevel'],
+        ]) {
+            const before = await manage.evaluate(name => window[name], variable);
+            assert(await manage.locator('#' + button).isVisible());
+            await manage.locator('#' + button).click();
+            assert.equal(await manage.evaluate(name => window[name], variable), before + 1);
+        }
+        assert.equal(await manage.locator('#btnHarvesterx10').isVisible(), false);
+        assert.equal(await manage.locator('#btnBatteryReboot').isVisible(), false);
+        const productionLink = manage.locator('[data-detail="production-detail"]:visible').first();
+        await productionLink.scrollIntoViewIfNeeded(); await pauseFrame(manage);
+        const consoleScroll = await manage.evaluate(() => scrollY);
+        await productionLink.click();
+        assert.equal(await manage.locator('#mobile-heading-production-detail').textContent(), '生产详情');
+        assert.equal(await manage.locator('#btnMakeHarvester').isVisible(), false);
+        assert(await manage.locator('#btnMakePaperclip').isVisible(), 'manual crafting remains accessible during automated phases');
+        const harvesterBefore = await manage.evaluate(() => harvesterLevel);
+        await manage.locator('#btnHarvesterx10').click(); await pauseFrame(manage);
+        assert.equal(await manage.evaluate(() => harvesterLevel), harvesterBefore + 10);
+        assert.match(await manage.locator('#harvesterDiv .mobile-device-label').textContent(), new RegExp(String(harvesterBefore + 10)));
+        assert.equal(await manage.locator('#mobileOps').textContent(),
+            await manage.evaluate(() => document.getElementById('operations').textContent + ' / ' + document.getElementById('maxOps').textContent));
+        await manage.locator('#mobile-panel-production-detail .mobile-back').click();
+        assert(Math.abs(await manage.evaluate(() => scrollY) - consoleScroll) < 3, 'detail back restores the actual console position');
+        await tab(manage, 390, 'power');
+        await manage.evaluate(() => { unusedClips = 1e20; buttonUpdate(); updatePower(); });
+        const farms = await manage.evaluate(() => farmLevel);
+        await manage.locator('#btnFarmx10').click();
+        assert.equal(await manage.evaluate(() => farmLevel), farms + 10);
+        await manage.evaluate(() => updatePower());
+        await manage.locator('#btnBatteryReboot').click();
+        assert.equal(await manage.evaluate(() => batteryLevel), 0);
+        await tab(manage, 390, 'production');
+        await manage.evaluate(() => { document.getElementById('factoryDiv').style.display = 'none'; });
+        await pauseFrame(manage);
+        assert.equal(await manage.locator('#btnMakeFactory').isVisible(), false, 'extracted purchase still obeys its original owner');
+        await manage.evaluate(() => { compFlag = 0; unusedClips = 0; buttonUpdate(); });
+        await pauseFrame(manage);
+        assert.equal(await manage.locator('#btnQcompute').isVisible(), false, 'original computing ancestor gates extracted quantum control');
+        assert(await manage.locator('#btnMakeFactory').isDisabled(), 'native affordability stays in force');
+        assert.deepEqual(await stored(manage), unchangedStorage, 'navigation and view state add no save fields or writes');
+        await manageContext.close();
+        const probeContext = await context(fixtures.space.storage, 390);
+        const probe = await probeContext.newPage();
+        await probe.goto(entry); await ready(probe);
+        await probe.evaluate(() => { unusedClips = 1e20; buttonUpdate(); updatePower(); });
+        const launched = await probe.evaluate(() => probeLaunchLevel);
+        await probe.locator('#btnMakeProbe').click();
+        assert.equal(await probe.evaluate(() => probeLaunchLevel), launched + 1);
+        await tab(probe, 390, 'exploration');
+        assert.equal(await probe.locator('#btnMakeProbe').isVisible(), false);
+        const speed = await probe.evaluate(() => probeSpeed);
+        await probe.locator('#btnRaiseProbeSpeed').click();
+        assert.equal(await probe.evaluate(() => probeSpeed), speed + 1);
+        await probe.locator('#mobile-panel-exploration .mobile-back').click();
+        assert(await probe.locator('#btnMakeProbe').isVisible());
+        await probeContext.close();
+        results.push('390: all five console purchases, named detail counts/costs, bulk purchase, dismantle, return position, ancestor locks and probe launch/design');
 
         for (const branch of ['accept', 'dismantle']) {
             const oldContext = await context(fixtures.space.storage);
@@ -400,7 +481,8 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
             window.__callbacks.find(timer => timer.delay === 10).callback();
         });
         await pauseFrame(ending);
-        assert.equal(await ending.locator('#mobile-tab-exploration').isVisible(), false);
+        assert.equal(await ending.locator('[data-detail="exploration"]:visible').count(), 0);
+        assert.equal(await ending.locator('body').getAttribute('data-mobile-tab'), 'production');
         assert.equal(await ending.locator('#mobile-tab-production').getAttribute('aria-selected'), 'true');
         await tab(ending, 390, 'strategy');
         await ending.evaluate(() => {
@@ -408,7 +490,8 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
             window.__callbacks.find(timer => timer.delay === 10).callback();
         });
         await pauseFrame(ending);
-        assert.equal(await ending.locator('#mobile-tab-strategy').isVisible(), false);
+        assert.equal(await ending.locator('[data-detail="strategy"]:visible').count(), 0);
+        assert.equal(await ending.locator('body').getAttribute('data-mobile-tab'), 'production');
         assert.equal(await ending.locator('#mobile-tab-production').getAttribute('aria-selected'), 'true');
         const totalText = await ending.locator('#clips').textContent();
         await ending.locator('.mobile-total summary').click();
@@ -419,7 +502,7 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
         assert.equal(await ending.evaluate(() => finalClips), 1);
         await ending.evaluate(() => { displayMessage('记录一'); displayMessage('记录二'); displayMessage('记录三'); });
         assert.match(await ending.locator('p.console').textContent(), /记录三/);
-        await ending.locator('.mobile-history summary').click();
+        // Terminal history and cumulative total share the already-open disclosure.
         assert.match(await ending.locator('.mobile-history').textContent(), /记录一/);
         assert.match(await ending.locator('.mobile-history').textContent(), /记录二/);
         await ending.screenshot({ path: path.join(output, 'ending-390.png'), fullPage: true });
