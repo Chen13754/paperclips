@@ -154,17 +154,17 @@
         return validate(envelope);
     }
 
-    function restore(envelope, storage) {
-        validate(envelope);
+    function writeStorage(values, storage, failureMessage) {
         var previous = readStorage(storage);
         var changed = [];
         try {
             keys.forEach(function (key) {
-                var value = envelope.storage[key];
+                var value = values[key];
                 if (value === previous[key]) return;
                 if (value === null) storage.removeItem(key);
                 else storage.setItem(key, value);
                 changed.push(key);
+                check(storage.getItem(key) === value, "浏览器未能保存变更。");
             });
         } catch (error) {
             try {
@@ -173,11 +173,26 @@
                 changed.forEach(function (key) {
                     if (previous[key] !== null) storage.setItem(key, previous[key]);
                 });
+                changed.forEach(function (key) {
+                    check(storage.getItem(key) === previous[key], "存档恢复不完整。");
+                });
             } catch (_) {
-                throw new Error("浏览器阻止了存档恢复。请勿刷新页面，当前游戏仍在内存中。");
+                throw new Error("浏览器阻止了存档恢复。请勿刷新或关闭页面，当前游戏仍在内存中，请先导出存档。");
             }
-            throw new Error("导入失败，已保留原存档。请检查浏览器存储空间或权限。");
+            throw new Error(failureMessage);
         }
+    }
+
+    function restore(envelope, storage) {
+        validate(envelope);
+        writeStorage(envelope.storage, storage,
+            "导入失败，已保留原存档。请检查浏览器存储空间或权限。");
+    }
+
+    function clear(storage) {
+        var empty = {};
+        keys.forEach(function (key) { empty[key] = null; });
+        writeStorage(empty, storage, "重开失败，已保留原存档。请检查浏览器存储权限。");
     }
 
     function exportFile() {
@@ -238,7 +253,7 @@
     }
 
     root.PaperclipSaves = { capture: capture, filename: filename, parse: parse,
-        restore: restore, exportFile: exportFile, openMigration: openMigration };
+        restore: restore, clear: clear, exportFile: exportFile, openMigration: openMigration };
 
     var exportButton = root.document.getElementById("exportSave");
     if (!exportButton) return; // The same exporter also runs on the original site for migration.

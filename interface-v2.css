@@ -283,6 +283,7 @@ html, body, button, a, select, input, summary { touch-action: manipulation; }
 #settingsDialog::backdrop { background: rgb(0 0 0 / .55); }
 .settings-header { position: sticky; top: -24px; z-index: 2; background: var(--paper); padding-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 20px; }
 .settings-header h2 { font-size: 26px; margin: 0; }
+.settings-header button { flex-shrink: 0; white-space: nowrap; }
 .settings-note { color: var(--muted); font-size: 16px; line-height: 1.6; margin: 10px 0 16px; }
 #gameSummary { margin: 0; }
 #gameSummary dt { color: var(--muted); font-size: 16px; }
@@ -290,6 +291,17 @@ html, body, button, a, select, input, summary { touch-action: manipulation; }
 .settings-toggle { display: flex; gap: 12px; align-items: center; min-height: 44px; cursor: pointer; }
 .settings-toggle input { width: 24px; height: 24px; accent-color: var(--blue); }
 #openResourceBoosts { width: 100%; border-color: var(--blue); color: var(--blue); }
+.settings-restart { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 20px; }
+.settings-restart h3, #boostWarning h3, #restartConfirmation h3 { font-size: 22px; margin: 0 0 12px; }
+.settings-warning { border-left: 4px solid var(--red); padding: 8px 12px; background: #fbe9e4; line-height: 1.65; }
+.settings-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.settings-actions button { flex: 1 1 auto; }
+.destructive { color: var(--red); border-color: var(--red); }
+#confirmRestart { color: white; background: var(--red); }
+#confirmRestart:hover:enabled { background: #b5261d; }
+#confirmRestart:disabled { color: #757570; background: #e8e8e2; border-color: #cecec7; }
+#restartStatus { margin: 16px 0 0; color: var(--red); font-size: 16px; }
+#restartStatus:empty { display: none; }
 #boostTitle { font-size: 22px; margin: 20px 0 10px; }
 .boost-row { padding: 16px 0; border-top: 1px solid var(--line); }
 .boost-row h4 { margin: 0; font-size: 18px; }

@@ -95,7 +95,8 @@
     const dialog = byId('settingsDialog'), opener = byId('openSettings');
     if (!dialog || !opener) return;
     const overview = byId('settingsOverview'), boosts = byId('resourceBoosts'), list = byId('boostList');
-    let timer = null, lastKeys = '';
+    const warning = byId('boostWarning'), restart = byId('restartConfirmation');
+    let timer = null, lastKeys = '', boostWarningAccepted = false;
     const rows = new Map();
     const make = (tag, className, text) => {
         const node = document.createElement(tag);
@@ -147,10 +148,20 @@
             }
         }
     }
+    function showView(view, focus) {
+        for (const section of [overview, boosts, warning, restart]) section.hidden = section !== view;
+        byId('settingsTitle').textContent = view === overview ? '设置' : view === restart ? '从头开始' : '资源增益';
+        dialog.scrollTop = 0;
+        render();
+        if (focus) byId(focus).focus({ preventScroll: true });
+    }
+    function enterBoosts() {
+        byId('boostStatus').textContent = '';
+        showView(boosts, 'boostTitle');
+    }
     opener.addEventListener('click', () => {
-        closeHint(); overview.hidden = false; boosts.hidden = true;
-        byId('settingsTitle').textContent = '设置';
-        dialog.showModal(); render();
+        closeHint(); showView(overview);
+        dialog.showModal();
         timer = setInterval(render, 1000);
     });
     byId('closeSettings').addEventListener('click', () => dialog.close());
@@ -161,13 +172,34 @@
             event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
     });
     byId('openResourceBoosts').addEventListener('click', () => {
-        overview.hidden = true; boosts.hidden = false;
-        byId('boostStatus').textContent = ''; render();
-        byId('boostTitle').focus({ preventScroll: true });
+        if (boostWarningAccepted) enterBoosts();
+        else showView(warning, 'cancelBoostWarning');
     });
-    byId('backToSettings').addEventListener('click', () => {
-        boosts.hidden = true; overview.hidden = false; byId('settingsTitle').textContent = '设置';
-        render(); byId('openResourceBoosts').focus({ preventScroll: true });
+    byId('cancelBoostWarning').addEventListener('click', () => showView(overview, 'openResourceBoosts'));
+    byId('confirmBoostWarning').addEventListener('click', () => {
+        boostWarningAccepted = true;
+        enterBoosts();
+    });
+    byId('backToSettings').addEventListener('click', () => showView(overview, 'openResourceBoosts'));
+    byId('openRestart').addEventListener('click', () => {
+        byId('restartStatus').textContent = '';
+        showView(restart, 'cancelRestart');
+    });
+    byId('cancelRestart').addEventListener('click', () => showView(overview, 'openRestart'));
+    byId('confirmRestart').addEventListener('click', () => {
+        if (game.fullRestartPending) return;
+        game.fullRestartPending = true;
+        byId('confirmRestart').disabled = true;
+        try {
+            game.PaperclipSaves.clear(game.localStorage);
+        } catch (error) {
+            game.fullRestartPending = false;
+            byId('confirmRestart').disabled = false;
+            byId('restartStatus').textContent = '无法重开：' + error.message;
+            return;
+        }
+        byId('restartStatus').textContent = '进度已清除，正在重新开始…';
+        game.location.reload();
     });
 
     // Hint buttons are siblings of native counters so native innerHTML updates cannot remove them.

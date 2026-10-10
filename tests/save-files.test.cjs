@@ -149,3 +149,72 @@ test('denied first write leaves all old data untouched', () => {
     assert.throws(() => g.PaperclipSaves.restore(incoming, storage));
     assert.deepEqual(storage.entries(), before);
 });
+
+for (const phase of [1, 2, 3]) {
+    test(`full clear returns phase ${phase} and prestige to fresh defaults without touching unrelated data`, () => {
+        const g = game();
+        g.humanFlag = phase === 1 ? 1 : 0; g.spaceFlag = phase === 3 ? 1 : 0;
+        g.funds = 1e6; g.clips = 1e27; g.ticks = 900000;
+        g.project1.flag = 1; g.project1.uses = 0; g.allStrats[1].active = 1;
+        g.cheatPrestigeU(); g.cheatPrestigeS();
+        const saved = copy(g.PaperclipSaves.capture());
+        g.localStorage.setItem('unrelated', 'keep');
+        g.fullRestartPending = true;
+        g.PaperclipSaves.clear(g.localStorage);
+        g.save(); // A queued autosave must not recreate the old progress before navigation.
+        for (const key of Object.keys(saved.storage)) assert.equal(g.localStorage.getItem(key), null, key);
+        assert.equal(g.localStorage.getItem('unrelated'), 'keep');
+        const fresh = game(g.localStorage), baseline = game();
+        assert.deepEqual(copy(fresh.getSaveSnapshot()), copy(baseline.getSaveSnapshot()));
+        assert.deepEqual([fresh.prestigeU, fresh.prestigeS, fresh.fullRestartPending], [0, 0, false]);
+        // The exported version 1 file can still restore progress after a deliberate full reset.
+        fresh.PaperclipSaves.restore(fresh.PaperclipSaves.parse(JSON.stringify(saved)), fresh.localStorage);
+        assert.equal(game(fresh.localStorage).clips, 1e27);
+        assert.equal(game(fresh.localStorage).prestigeU, 1);
+    });
+}
+
+for (const failKey of ['saveGame', 'saveProjectsUses', 'saveProjectsFlags',
+    'saveProjectsActive', 'saveStratsActive', 'savePrestige']) {
+    test(`full clear rolls back all six raw saves if deleting ${failKey} fails`, () => {
+        const g = game();
+        const entries = Object.fromEntries(Object.keys(g.PaperclipSaves.capture().storage)
+            .map(key => [key, 'raw legacy data for ' + key]));
+        const storage = new MemoryStorage({ ...entries, unrelated: 'keep' });
+        const remove = storage.removeItem;
+        let failed = false;
+        storage.removeItem = function (key) {
+            if (key === failKey && !failed) { failed = true; throw new Error('SecurityError'); }
+            return remove.call(this, key);
+        };
+        assert.throws(() => g.PaperclipSaves.clear(storage), /重开失败，已保留原存档/);
+        assert.deepEqual(storage.entries(), { ...entries, unrelated: 'keep' });
+    });
+}
+
+test('full clear handles fresh/sparse storage and detects a silently rejected deletion', () => {
+    const g = game();
+    const storage = new MemoryStorage({ savePrestige: 'legacy', unrelated: 'keep' });
+    storage.removeItem = () => {};
+    assert.throws(() => g.PaperclipSaves.clear(storage), /已保留原存档/);
+    assert.equal(storage.getItem('savePrestige'), 'legacy');
+    delete storage.removeItem;
+    g.PaperclipSaves.clear(storage); g.PaperclipSaves.clear(storage);
+    assert.deepEqual(storage.entries(), { unrelated: 'keep' });
+});
+
+test('full clear read denial never deletes data; rollback denial explains how to preserve runtime', () => {
+    const g = game();
+    const unreadable = new MemoryStorage({ saveGame: 'old' });
+    unreadable.getItem = () => { throw new Error('SecurityError'); };
+    assert.throws(() => g.PaperclipSaves.clear(unreadable));
+    assert.deepEqual(unreadable.entries(), { saveGame: 'old' });
+    const storage = new MemoryStorage({ saveGame: 'old', saveProjectsUses: 'projects' });
+    storage.failKey = 'saveGame';
+    const remove = storage.removeItem;
+    storage.removeItem = function (key) {
+        if (key === 'saveProjectsUses') throw new Error('SecurityError');
+        return remove.call(this, key);
+    };
+    assert.throws(() => g.PaperclipSaves.clear(storage), /请勿刷新或关闭页面.*请先导出存档/);
+});

@@ -52,7 +52,11 @@ async function ready(page) {
 }
 const state = page => page.evaluate(() => getSaveSnapshot());
 const open = async page => { await page.locator('#openSettings').click(); assert(await page.locator('#settingsDialog').isVisible()); };
-const boosts = async page => { await open(page); await page.locator('#openResourceBoosts').click(); };
+const boosts = async page => {
+    await open(page); await page.locator('#openResourceBoosts').click();
+    if (await page.locator('#boostWarning').isVisible()) await page.locator('#confirmBoostWarning').click();
+};
+const stored = page => page.evaluate(() => Object.fromEntries(Object.entries(localStorage)));
 const pause = page => page.evaluate(() => new Promise(requestAnimationFrame));
 (async () => {
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -92,6 +96,149 @@ const pause = page => page.evaluate(() => new Promise(requestAnimationFrame));
         assert.deepEqual(await initial.locator('.boost-row').evaluateAll(rows => rows.map(row => row.dataset.resource)), ['funds','wire']);
         await initial.locator('#closeSettings').click(); await initialContext.close();
         results.push('index redirect and fresh stage have no automatic external requests or popups');
+
+        const warningContext = await context(fixture(1).storage);
+        const warningPage = await warningContext.newPage(); await warningPage.goto(entry); await ready(warningPage);
+        const warningSave = await stored(warningPage), warningState = await state(warningPage);
+        for (const exit of ['cancel', 'escape', 'outside', 'close']) {
+            await open(warningPage); await warningPage.locator('#openResourceBoosts').click();
+            assert(await warningPage.locator('#boostWarning').isVisible());
+            assert.equal(await warningPage.locator('#resourceBoosts').isVisible(), false);
+            assert.match(await warningPage.locator('#boostWarning').textContent(), /首次游玩不建议.*破坏探索和成长/);
+            assert(await warningPage.locator('#cancelBoostWarning').evaluate(node => node === document.activeElement));
+            if (exit === 'cancel') {
+                await warningPage.locator('#cancelBoostWarning').click();
+                assert(await warningPage.locator('#openResourceBoosts').evaluate(node => node === document.activeElement));
+                await warningPage.locator('#closeSettings').click();
+            } else if (exit === 'escape') await warningPage.keyboard.press('Escape');
+            else if (exit === 'outside') await warningPage.mouse.click(1, 1);
+            else await warningPage.locator('#closeSettings').click();
+            assert.deepEqual(await stored(warningPage), warningSave);
+            assert.deepEqual(await state(warningPage), warningState);
+        }
+        await open(warningPage); await warningPage.locator('#openResourceBoosts').click();
+        await warningPage.screenshot({ path: path.join(output, 'boost-warning-390.png') });
+        await warningPage.locator('#confirmBoostWarning').click();
+        assert(await warningPage.locator('#resourceBoosts').isVisible());
+        assert.deepEqual(await stored(warningPage), warningSave);
+        assert.deepEqual(await state(warningPage), warningState);
+        await warningPage.locator('#backToSettings').click(); await warningPage.locator('#openResourceBoosts').click();
+        assert(await warningPage.locator('#resourceBoosts').isVisible());
+        await warningPage.locator('#closeSettings').click(); await open(warningPage);
+        await warningPage.locator('#openResourceBoosts').click();
+        assert(await warningPage.locator('#resourceBoosts').isVisible(), 'accepted warning lasts only this document');
+        await warningPage.reload(); await ready(warningPage); await open(warningPage);
+        await warningPage.locator('#openResourceBoosts').click();
+        assert(await warningPage.locator('#boostWarning').isVisible(), 'refresh shows warning again');
+        assert.deepEqual(await stored(warningPage), warningSave, 'warning creates no save or preference keys');
+        await warningContext.close();
+        results.push('warning cancel/Esc/outside/close changes nothing; explicit acceptance skips repeats until refresh');
+
+        for (const phase of [1, 2, 3]) {
+            const resetContext = await context({ ...fixture(phase).storage, unrelated: 'keep' }, phase === 2 ? 1024 : 390);
+            const resetPage = await resetContext.newPage(); await resetPage.goto(entry); await ready(resetPage);
+            // Include a real modifier action in the progress that will be deliberately discarded.
+            await boosts(resetPage);
+            await resetPage.locator('.boost-row button').first().click();
+            await resetPage.locator('#closeSettings').click();
+            const pendingDownload = resetPage.waitForEvent('download');
+            await resetPage.locator('#exportSave').click();
+            const download = await pendingDownload, file = path.join(output, 'before-reset-' + phase + '.json');
+            await download.saveAs(file);
+            const exported = JSON.parse(fs.readFileSync(file, 'utf8'));
+            const baselineContext = await context(exported.storage);
+            const baselinePage = await baselineContext.newPage(); await baselinePage.goto(entry); await ready(baselinePage);
+            const expectedReload = await state(baselinePage);
+            await baselineContext.close();
+            const before = await stored(resetPage), beforeState = await state(resetPage);
+            for (const exit of ['cancel', 'escape', 'outside', 'close']) {
+                await open(resetPage); await resetPage.locator('#openRestart').click();
+                assert(await resetPage.locator('#restartConfirmation').isVisible());
+                assert.match(await resetPage.locator('#restartConfirmation').textContent(), /全部周目加成.*无法撤销/);
+                assert(await resetPage.locator('#cancelRestart').evaluate(node => node === document.activeElement));
+                if (exit === 'cancel') {
+                    await resetPage.locator('#cancelRestart').click();
+                    assert(await resetPage.locator('#openRestart').evaluate(node => node === document.activeElement));
+                    await resetPage.locator('#closeSettings').click();
+                } else if (exit === 'escape') await resetPage.keyboard.press('Escape');
+                else if (exit === 'outside') await resetPage.mouse.click(1, 1);
+                else await resetPage.locator('#closeSettings').click();
+                assert.deepEqual(await stored(resetPage), before);
+                assert.deepEqual(await state(resetPage), beforeState);
+            }
+            await open(resetPage); await resetPage.locator('#openRestart').click();
+            await resetPage.screenshot({ path: path.join(output, 'restart-confirm-' + phase + '.png') });
+            await resetPage.evaluate(() => {
+                saveTimer = 249;
+                window.addEventListener('beforeunload', () => {
+                    // Exercise a due native autosave while the old document is leaving.
+                    window.__callbacks.find(item => item.delay === 100).callback();
+                    localStorage.setItem('__restartAutosaveBlocked', String(localStorage.getItem('saveGame') === null));
+                }, { once: true });
+            });
+            const resetLoad = resetPage.waitForEvent('load');
+            await resetPage.locator('#confirmRestart').click(); await resetLoad; await ready(resetPage);
+            assert.deepEqual(await resetPage.evaluate(() => [humanFlag, spaceFlag, clips, ticks, prestigeU, prestigeS]), [1,0,0,0,0,0]);
+            assert.equal(await resetPage.evaluate(() => fullRestartPending), false);
+            assert.deepEqual(await stored(resetPage), { unrelated: 'keep', __restartAutosaveBlocked: 'true' });
+            assert.equal(await resetPage.locator('#cover').evaluate(node => node.style.display), 'none');
+            await open(resetPage); assert.match(await resetPage.locator('#gameSummary').textContent(), /需求加成 \+0%/);
+            await resetPage.locator('#openResourceBoosts').click();
+            assert(await resetPage.locator('#boostWarning').isVisible(), 'new document warns again after restart');
+            await resetPage.locator('#closeSettings').click();
+            resetPage.once('dialog', dialog => dialog.accept());
+            const imported = resetPage.waitForEvent('load');
+            await resetPage.locator('#saveFile').setInputFiles(file); await imported; await ready(resetPage);
+            assert.equal(await resetPage.evaluate(() => PaperclipTools.stage()), phase);
+            assert.deepEqual(await resetPage.evaluate(() => [prestigeU, prestigeS]), [2,1]);
+            for (const [key, value] of Object.entries(exported.storage))
+                assert.equal(await resetPage.evaluate(key => localStorage.getItem(key), key), value);
+            for (const resource of await resetPage.evaluate(() => PaperclipTools.resources()))
+                assert.equal(await resetPage.evaluate(key => window[key], resource.key), expectedReload.saveGame[resource.key], resource.key);
+            await resetContext.close();
+            results.push('phase ' + phase + ': reset cancellation paths preserve progress; confirmed reset clears prestige and blocks due autosave; old export imports again');
+        }
+
+        for (const rollbackFails of [false, true]) {
+            const failureContext = await context(fixture(2).storage);
+            const failurePage = await failureContext.newPage(); await failurePage.goto(entry); await ready(failurePage);
+            const before = await stored(failurePage), runtime = await state(failurePage);
+            await open(failurePage); await failurePage.locator('#openRestart').click();
+            await failurePage.evaluate(rollbackFails => {
+                const remove = Storage.prototype.removeItem, set = Storage.prototype.setItem;
+                let failed = false;
+                Storage.prototype.removeItem = function (key) {
+                    if (this === localStorage && key === 'saveProjectsActive' && !failed) {
+                        failed = true; throw new DOMException('Synthetic deletion denial', 'SecurityError');
+                    }
+                    return remove.call(this, key);
+                };
+                Storage.prototype.setItem = function (key, value) {
+                    if (rollbackFails && this === localStorage && key === 'saveGame') {
+                        Storage.prototype.setItem = set;
+                        throw new DOMException('Synthetic rollback denial', 'QuotaExceededError');
+                    }
+                    return set.call(this, key, value);
+                };
+            }, rollbackFails);
+            await failurePage.locator('#confirmRestart').click();
+            assert(await failurePage.locator('#restartConfirmation').isVisible(), 'failure never reloads');
+            assert.equal(await failurePage.evaluate(() => fullRestartPending), false);
+            assert.equal(await failurePage.locator('#confirmRestart').isDisabled(), false);
+            assert.deepEqual(await state(failurePage), runtime, 'runtime remains intact');
+            if (rollbackFails) assert.match(await failurePage.locator('#restartStatus').textContent(), /请勿刷新或关闭页面.*请先导出存档/);
+            else {
+                assert.match(await failurePage.locator('#restartStatus').textContent(), /已保留原存档/);
+                assert.deepEqual(await stored(failurePage), before);
+            }
+            await failurePage.locator('#closeSettings').click();
+            const pending = failurePage.waitForEvent('download'); await failurePage.locator('#exportSave').click();
+            const download = await pending, filename = path.join(output, 'reset-failure-' + rollbackFails + '.json');
+            await download.saveAs(filename);
+            assert.equal(JSON.parse(JSON.parse(fs.readFileSync(filename, 'utf8')).storage.saveGame).clips, runtime.saveGame.clips);
+            await failureContext.close();
+        }
+        results.push('deletion denial rolls storage back; rollback denial keeps runtime and explains export; both failures allow a real export');
 
         for (const phase of [1, 2, 3]) {
             const ctx = await context(fixture(phase).storage);
@@ -167,6 +314,24 @@ const pause = page => page.evaluate(() => new Promise(requestAnimationFrame));
             assert(box.y >= 0 && box.y + box.height <= (width === 1024 ? 768 : 1024) + 1);
             assert.deepEqual(await page.locator('#settingsDialog button:visible').evaluateAll(nodes =>
                 nodes.filter(node => node.getBoundingClientRect().height < 43.5).map(node => node.id)), []);
+            for (const [entryButton, view, cancelButton] of [
+                ['openResourceBoosts', 'boostWarning', 'cancelBoostWarning'],
+                ['openRestart', 'restartConfirmation', 'cancelRestart'],
+            ]) {
+                await page.locator('#' + entryButton).click();
+                assert(await page.locator('#' + view).isVisible());
+                assert(await page.locator('#' + cancelButton).evaluate(node => node === document.activeElement));
+                const bounds = await page.locator('#settingsDialog').boundingBox();
+                assert(bounds.x >= 0 && bounds.x + bounds.width <= width + 1);
+                assert(bounds.y >= 0 && bounds.y + bounds.height <= (width === 1024 ? 768 : 1024) + 1);
+                assert.equal(await page.locator('#settingsDialog').evaluate(node => node.scrollWidth > node.clientWidth + 1), false);
+                assert.deepEqual(await page.locator('#settingsDialog button:visible').evaluateAll(nodes =>
+                    nodes.filter(node => node.getBoundingClientRect().height < 43.5).map(node => node.id)), []);
+                if (width === 320 || width === 1024)
+                    await page.screenshot({ path: path.join(output, view + '-' + width + '.png') });
+                await page.locator('#' + cancelButton).click();
+            }
+            await page.locator('#closeSettings').focus();
             await page.keyboard.press('Tab');
             assert.equal(await page.locator('#settingsDialog').evaluate(node => node.contains(document.activeElement)), true);
             await page.mouse.click(1,1); assert.equal(await page.locator('#settingsDialog').isVisible(), false);

@@ -5081,7 +5081,10 @@ for(var i=0; i < activeProjects.length; i++){
     
 }
 
+// Page-only guard: a pending full restart must not autosave the old runtime again.
+var fullRestartPending = false;
 function save() {
+    if (fullRestartPending) return;
     var snapshot = getSaveSnapshot();
     Object.keys(snapshot).forEach(function(key) {
         localStorage.setItem(key, JSON.stringify(snapshot[key]));

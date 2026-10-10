@@ -3,7 +3,7 @@
     <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="interface-v2.css?v=counter-stable-1" />
+        <link rel="stylesheet" type="text/css" href="interface-v2.css?v=restart-warning-1" />
 <title>回形针 - Paperclips</title>
     </head>
     
@@ -876,6 +876,20 @@
     <label class="settings-toggle"><input type="checkbox" id="showNumberHints" checked>显示数值说明（问号）</label>
     <p class="settings-note">此开关仅在本次页面打开期间生效。</p>
     <button type="button" id="openResourceBoosts">资源增益 →</button>
+    <section class="settings-restart" aria-labelledby="restartLabel">
+      <h3 id="restartLabel">从头开始</h3>
+      <p class="settings-note">清除当前进度和全部周目加成，重新体验游戏。</p>
+      <button type="button" id="openRestart" class="destructive">从头开始…</button>
+    </section>
+  </section>
+  <section id="boostWarning" hidden aria-labelledby="boostWarningTitle">
+    <h3 id="boostWarningTitle">使用前请注意</h3>
+    <p class="settings-warning">首次游玩不建议使用资源增益。直接修改资源会改变游戏节奏，可能破坏探索和成长的体验。</p>
+    <p class="settings-note">确认后，本次网页内不再重复提示；刷新或重新打开网页后会再次提示。</p>
+    <div class="settings-actions">
+      <button type="button" id="cancelBoostWarning">取消</button>
+      <button type="button" id="confirmBoostWarning">了解风险，继续</button>
+    </div>
   </section>
   <section id="resourceBoosts" hidden aria-labelledby="boostTitle">
     <button type="button" id="backToSettings">← 返回设置</button>
@@ -884,19 +898,29 @@
     <div id="boostList"></div>
     <p id="boostStatus" role="status" aria-live="polite"></p>
   </section>
+  <section id="restartConfirmation" hidden aria-labelledby="restartTitle">
+    <h3 id="restartTitle">确定从头开始？</h3>
+    <p class="settings-warning">这将清除本浏览器的当前进度、研究、资源、游戏时间以及全部周目加成，恢复首次游玩状态。此操作无法撤销。</p>
+    <p class="settings-note">如需保留当前进度，请先取消，关闭设置并导出存档。已导出的存档文件不受影响，可再次导入。</p>
+    <div class="settings-actions">
+      <button type="button" id="cancelRestart">取消</button>
+      <button type="button" id="confirmRestart" class="destructive">清空进度并重开</button>
+    </div>
+    <p id="restartStatus" role="status" aria-live="polite"></p>
+  </section>
 </dialog>
 <div id="numberHint" popover="manual" role="note">
   <p id="numberHintText" aria-live="polite"></p><button type="button" id="closeNumberHint" aria-label="关闭数值说明">关闭</button>
 </div>
 <footer class="site-footer"><span>游戏作者： <strong>Frank Lantz</strong></span>
 <span><a href="https://www.decisionproblem.com/paperclips/">原作</a> / <a href="https://github.com/g1tyx/paperclips">中文版来源</a></span></footer>
-<script src="zh.js?v=counter-stable-1"></script>
-        <script type="text/javascript" src="combat-v3.js?v=counter-stable-1"></script>
+<script src="zh.js?v=restart-warning-1"></script>
+        <script type="text/javascript" src="combat-v3.js?v=restart-warning-1"></script>
         <script type="text/javascript" src="globals-v3.js"></script>      
-        <script type="text/javascript" src="projects-v3.js?v=counter-stable-1"></script>
-<script type="text/javascript" src="main-v3.js?v=counter-stable-1"></script>
-<script src="save-files.js?v=counter-stable-1"></script>
-<script src="mobile-ui.js?v=counter-stable-1"></script>
-<script src="settings.js?v=counter-stable-1"></script>
+        <script type="text/javascript" src="projects-v3.js?v=restart-warning-1"></script>
+<script type="text/javascript" src="main-v3.js?v=restart-warning-1"></script>
+<script src="save-files.js?v=restart-warning-1"></script>
+<script src="mobile-ui.js?v=restart-warning-1"></script>
+<script src="settings.js?v=restart-warning-1"></script>
     </body>
 </html>
