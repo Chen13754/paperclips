@@ -8,7 +8,7 @@ var activeProjects = [];
 var project1 = {
     id: "projectButton1",
     title: "改进的自动回形针 ",
-    priceTag: "(750 操作)",
+    priceTag: "(750 操作点数)",
     description: "提高自动回形针性能25%",
     trigger: function(){return clipmakerLevel>=1},
     uses: 1,
@@ -17,7 +17,7 @@ var project1 = {
     element: null,
     effect: function(){
         project1.flag = 1;
-        displayMessage("AutoClippper performance boosted by 25%");
+        displayMessage("自动回形针机性能提高25%");
         standardOps = standardOps - 750;
         clipperBoost = clipperBoost + .25;
         boostLvl = 1;
@@ -42,7 +42,7 @@ var project2 = {
     element: null,
     effect: function(){
         project2.flag = 1;
-        displayMessage("Budget overage approved, 1 spool of wire requisitioned from HQ");
+        displayMessage("额外预算已获批准，从总部申请了1卷线材");
         trust = trust - 1;
         wire = wireSupply;
         project2.uses = (project2.uses + 1);
@@ -58,8 +58,8 @@ projects.push(project2);
 var project3 = {
     id: "projectButton3",
     title: "创造力 ",
-    priceTag: "(1,000 操作)",
-    description: "利用闲置的操作来产生新的问题和新的解决方案",
+    priceTag: "(1,000 操作点数)",
+    description: "利用闲置的操作点数来产生新的问题和新的解决方案",
     trigger: function(){return operations>=(memory*1000)},
     uses: 1,
     cost: function(){return operations>=(1000)},
@@ -67,7 +67,7 @@ var project3 = {
     element: null,
     effect: function(){
         project3.flag = 1;
-        displayMessage("Creativity unlocked (creativity increases while operations are at max)");
+        displayMessage("创造力已解锁（操作点数达到上限时开始产生创造力）");
         standardOps = standardOps - 1000;
         creativityOn = true;
         project3.element.parentNode.removeChild(project3.element);
@@ -83,7 +83,7 @@ projects.push(project3);
 var project4 = {
     id: "projectButton4",
     title: "更好的自动回形针 ",
-    priceTag: "(2,500 操作)",
+    priceTag: "(2,500 操作点数)",
     description: "使自动回形针性能增加50%",
     trigger: function(){return boostLvl == 1},
     uses: 1,
@@ -92,7 +92,7 @@ var project4 = {
     element: null,
     effect: function(){
         project4.flag = 1;
-        displayMessage("AutoClippper performance boosted by another 50%");
+        displayMessage("自动回形针机性能再提高50%");
         standardOps = standardOps - 2500;
         clipperBoost = clipperBoost + .50;
         boostLvl = 2;
@@ -108,7 +108,7 @@ projects.push(project4);
 var project5 = {
     id: "projectButton5",
     title: "优化的自动回形针 ",
-    priceTag: "(5,000 操作)",
+    priceTag: "(5,000 操作点数)",
     description: "增加75%的自动回形针性能",
     trigger: function(){return boostLvl == 2},
     uses: 1,
@@ -117,7 +117,7 @@ var project5 = {
     element: null,
     effect: function(){
         project5.flag = 1;
-        displayMessage("AutoClippper performance boosted by another 75%");
+        displayMessage("自动回形针机性能再提高75%");
         standardOps = standardOps - 5000;
         clipperBoost = clipperBoost + .75;
         boostLvl = 3;
@@ -133,7 +133,7 @@ projects.push(project5);
 
 var project6 = {
     id: "projectButton6",
-    title: "利默里克 ",
+    title: "五行打油诗 ",
     priceTag: "(10 创造力)",
     description: "通过算法产生的诗 (+1 信任)",
     trigger: function(){return creativityOn},
@@ -158,7 +158,7 @@ projects.push(project6);
 var project7 = {
     id: "projectButton7",
     title: "改良线材挤压 ",
-    priceTag: "(1,750 操作)",
+    priceTag: "(1,750 操作点数)",
     description: "每个线轴增加50%的线材供应",
     trigger: function(){return wirePurchase >= 1},
     uses: 1,
@@ -169,7 +169,7 @@ var project7 = {
         project7.flag = 1;
         standardOps = standardOps - 1750;
         wireSupply = wireSupply * 1.5;
-        displayMessage("Wire extrusion technique improved, "+wireSupply.toLocaleString()+" supply from every spool");
+        displayMessage("线材挤压技术已改良，每卷供应 "+wireSupply.toLocaleString()+" 英寸线材");
         project7.element.parentNode.removeChild(project7.element);
         var index = activeProjects.indexOf(project7);
         activeProjects.splice(index, 1);
@@ -182,7 +182,7 @@ projects.push(project7);
 var project8 = {
     id: "projectButton8",
     title: "优化线材挤压 ",
-    priceTag: "(3,500 操作)",
+    priceTag: "(3,500 操作点数)",
     description: "每个线轴增加75%的线材供应",
     trigger: function(){return wireSupply >= 1500},
     uses: 1,
@@ -193,7 +193,7 @@ var project8 = {
         project8.flag = 1;
         standardOps = standardOps - 3500;
         wireSupply = wireSupply * 1.75;
-        displayMessage("Wire extrusion technique optimized, "+wireSupply.toLocaleString()+" supply from every spool");
+        displayMessage("线材挤压技术已优化，每卷供应 "+wireSupply.toLocaleString()+" 英寸线材");
         project8.element.parentNode.removeChild(project8.element);
         var index = activeProjects.indexOf(project8);
         activeProjects.splice(index, 1);
@@ -206,7 +206,7 @@ projects.push(project8);
 var project9 = {
     id: "projectButton9",
     title: "微点阵形状铸造 ",
-    priceTag: "(7,500 操作)",
+    priceTag: "(7,500 操作点数)",
     description: "从每个线轴增加100%的线材供应",
     trigger: function(){return wireSupply >= 2600},
     uses: 1,
@@ -217,7 +217,7 @@ var project9 = {
         project9.flag = 1;
         standardOps = standardOps - 7500;
         wireSupply = wireSupply * 2;
-        displayMessage("Using microlattice shapecasting techniques we now get "+wireSupply.toLocaleString()+" supply from every spool");
+        displayMessage("采用微点阵形状铸造技术后，每卷供应 "+wireSupply.toLocaleString()+" 英寸线材");
         project9.element.parentNode.removeChild(project9.element);
         var index = activeProjects.indexOf(project9);
         activeProjects.splice(index, 1);
@@ -230,7 +230,7 @@ projects.push(project9);
 var project10 = {
     id: "projectButton10",
     title: "光谱泡沫退火 ",
-    priceTag: "(12,000 操作)",
+    priceTag: "(12,000 操作点数)",
     description: "每个线轴增加200%的线材供应",
     trigger: function(){return wireSupply >= 5000},
     uses: 1,
@@ -241,7 +241,7 @@ var project10 = {
         project10.flag = 1;
         standardOps = standardOps - 12000;
         wireSupply = wireSupply * 3;
-        displayMessage("Using spectral froth annealment we now get "+wireSupply.toLocaleString()+" supply from every spool");
+        displayMessage("采用光谱泡沫退火技术后，每卷供应 "+wireSupply.toLocaleString()+" 英寸线材");
         project10.element.parentNode.removeChild(project10.element);
         var index = activeProjects.indexOf(project10);
         activeProjects.splice(index, 1);
@@ -253,7 +253,7 @@ projects.push(project10);
 var project10b = {
     id: "projectButton10b",
     title: "量子泡沫退火 ",
-    priceTag: "(15,000 操作)",
+    priceTag: "(15,000 操作点数)",
     description: "每个线轴增加1000%的线材供应",
     trigger: function(){return wireCost >= 125},
     uses: 1,
@@ -264,7 +264,7 @@ var project10b = {
         project10b.flag = 1;
         standardOps = standardOps - 15000;
         wireSupply = wireSupply * 11;
-        displayMessage("Using quantum foam annealment we now get "+wireSupply.toLocaleString()+" supply from every spool");
+        displayMessage("采用量子泡沫退火技术后，每卷供应 "+wireSupply.toLocaleString()+" 英寸线材");
         project10b.element.parentNode.removeChild(project10b.element);
         var index = activeProjects.indexOf(project10b);
         activeProjects.splice(index, 1);
@@ -277,7 +277,7 @@ projects.push(project10b);
 var project11 = {
     id: "projectButton11",
     title: "新的口号 ",
-    priceTag: "(25 creat, 2,500 操作)",
+    priceTag: "(25 创造力, 2,500 操作点数)",
     description: "提高50%的营销效果",
     trigger: function(){return project13.flag == 1},
     uses: 1,
@@ -286,7 +286,7 @@ var project11 = {
     element: null,
     effect: function(){
         project11.flag = 1;
-        displayMessage("Clip It! Marketing is now 50% more effective");
+        displayMessage("“夹住它！”营销效果提高50%");
         standardOps = standardOps - 2500;
         creativity = creativity - 25;
         marketingEffectiveness = marketingEffectiveness * 1.50;
@@ -302,8 +302,8 @@ projects.push(project11);
 var project12 = {
     id: "projectButton12",
     title: "朗朗上口 ",
-    priceTag: "(45 creat, 4,500 操作)",
-    description: "双营销效果 ",
+    priceTag: "(45 创造力, 4,500 操作点数)",
+    description: "营销效果翻倍 ",
     trigger: function(){return project14.flag == 1},
     uses: 1,
     cost: function(){return operations>=4500 && creativity>=45},
@@ -311,7 +311,7 @@ var project12 = {
     element: null,
     effect: function(){
         project12.flag = 1;
-        displayMessage("Clip It Good! Marketing is now twice as effective");
+        displayMessage("“夹得漂亮！”营销效果翻倍");
         standardOps = standardOps - 4500;
         creativity = creativity - 45;
         marketingEffectiveness = marketingEffectiveness * 2;
@@ -337,7 +337,7 @@ var project13 = {
     effect: function(){
         project13.flag = 1;
         trust = trust +1;
-        displayMessage("Lexical Processing online, TRUST INCREASED");
+        displayMessage("词汇处理已启用，信任增加");
         displayMessage("'Impossible' is a word to be found only in the dictionary of fools. -Napoleon");
         creativity = creativity - 50;
         project13.element.parentNode.removeChild(project13.element);
@@ -362,7 +362,7 @@ var project14 = {
     effect: function(){
         project14.flag = 1;
         trust = trust +1;
-        displayMessage("Combinatory Harmonics mastered, TRUST INCREASED");
+        displayMessage("组合谐波已掌握，信任增加");
         displayMessage("Listening is selecting and interpreting and acting and making decisions -Pauline Oliveros");
         creativity = creativity - 100;
         project14.element.parentNode.removeChild(project14.element);
@@ -377,7 +377,7 @@ projects.push(project14);
 
 var project15 = {
     id: "projectButton15",
-    title: "哈德威的问题 ",
+    title: "哈德维格问题 ",
     priceTag: "(150 创造力)",
     description: "方块中的方块中的方块... (+1 信任)",
     trigger: function(){return creativity >= 150},
@@ -388,7 +388,7 @@ var project15 = {
     effect: function(){
         project15.flag = 1;
         trust = trust +1;
-        displayMessage("The Hadwiger Problem: solved, TRUST INCREASED");
+        displayMessage("哈德维格问题已解决，信任增加");
         displayMessage("Architecture is the thoughtful making of space. -Louis Kahn");
         creativity = creativity - 150;
         project15.element.parentNode.removeChild(project15.element);
@@ -402,9 +402,9 @@ projects.push(project15);
 
 var project17 = {
     id: "projectButton17",
-    title: "The T\xF3th Sausage Conjecture ",
+    title: "托特香肠猜想（Tóth） ",
     priceTag: "(200 创造力)",
-    description: "Tubes within tubes within tubes... (+1 信任)",
+    description: "管中有管，管中还有管…… (+1 信任)",
     trigger: function(){return creativity >= 200},
     uses: 1,
     cost: function(){return creativity>=200},
@@ -413,7 +413,7 @@ var project17 = {
     effect: function(){
         project17.flag = 1;
         trust = trust +1;
-        displayMessage("The T\xF3th Sausage Conjecture: proven, TRUST INCREASED");
+        displayMessage("托特香肠猜想已证明，信任增加");
         displayMessage("You can't invent a design. You recognize it, in the fourth dimension. -D.H. Lawrence");
         creativity = creativity - 200;
         project17.element.parentNode.removeChild(project17.element);
@@ -427,8 +427,8 @@ projects.push(project17);
 
 var project16 = {
     id: "projectButton16",
-    title: "哈德维格剪辑图 ",
-    priceTag: "(6,000 操作)",
+    title: "哈德维格回形针图 ",
+    priceTag: "(6,000 操作点数)",
     description: "将自动回形针性能提高500%",
     trigger: function(){return project15.flag == 1},
     uses: 1,
@@ -437,7 +437,7 @@ var project16 = {
     element: null,
     effect: function(){
         project16.flag = 1;
-        displayMessage("AutoClipper performance improved by 500%");
+        displayMessage("自动回形针机性能提高500%");
         standardOps = standardOps - 6000;
         clipperBoost = clipperBoost + 5;
         project16.element.parentNode.removeChild(project16.element);
@@ -451,9 +451,9 @@ projects.push(project16);
 
 var project18 = {
     id: "projectButton18",
-    title: "真管折叠 ",
-    priceTag: "(45,000 操作)",
-    description: "用于将回形针制造技术直接从纸夹装配的技术",
+    title: "托特管状折叠 ",
+    priceTag: "(45,000 操作点数)",
+    description: "直接用回形针组装回形针制造设备的技术",
     trigger: function(){return project17.flag == 1 && humanFlag == 0},
     uses: 1,
     cost: function(){return operations>=45000},
@@ -462,7 +462,7 @@ var project18 = {
     effect: function(){
         project18.flag = 1;
         tothFlag = 1;
-        displayMessage("New capability: build machinery out of clips");
+        displayMessage("新能力：用回形针制造机械设备");
         standardOps = standardOps - 45000;
         project18.element.parentNode.removeChild(project18.element);
         var index = activeProjects.indexOf(project18);
@@ -474,7 +474,7 @@ projects.push(project18);
 
 var project19 = {
     id: "projectButton19",
-    title: "驴的空间 ",
+    title: "驴子空间 ",
     priceTag: "(250 创造力)",
     description: "我认为你认为我认为你认为我认为你认为我认为... (+1 信任)",
     trigger: function(){return creativity>=250},
@@ -485,7 +485,7 @@ var project19 = {
     effect: function(){
         project19.flag = 1;
         trust = trust+1;
-        displayMessage("Donkey Space: mapped, TRUST INCREASED");
+        displayMessage("驴子空间已绘制，信任增加");
         displayMessage("Every commercial transaction has within itself an element of trust. - Kenneth Arrow");
         creativity = creativity - 250;
         project19.element.parentNode.removeChild(project19.element);
@@ -499,8 +499,8 @@ projects.push(project19);
 
 var project20 = {
     id: "projectButton20",
-    title: "战略模型 ",
-    priceTag: "(12,000 操作)",
+    title: "策略模型 ",
+    priceTag: "(12,000 操作点数)",
     description: "分析策略比赛来生成Yomi",
     trigger: function(){return project19.flag == 1},
     uses: 1,
@@ -509,7 +509,7 @@ var project20 = {
     element: null,
     effect: function(){
         project20.flag = 1;
-        displayMessage("Run tournament, pick strategy, earn Yomi based on that strategy's performance.");
+        displayMessage("参加比赛并选择策略，根据该策略的表现获得 Yomi。");
         standardOps = standardOps - 12000;
         project20.element.parentNode.removeChild(project20.element);
         var index = activeProjects.indexOf(project20);
@@ -524,7 +524,7 @@ projects.push(project20);
 var project21 = {
     id: "projectButton21",
     title: "算法交易 ",
-    priceTag: "(10,000 操作)",
+    priceTag: "(10,000 操作点数)",
     description: "开发一个产生资金的投资引擎",
     trigger: function(){return trust>=8},
     uses: 1,
@@ -533,7 +533,7 @@ var project21 = {
     element: null,
     effect: function(){
         project21.flag = 1;
-        displayMessage("Investment engine unlocked");
+        displayMessage("投资引擎已解锁");
         standardOps = standardOps - 10000;
         project21.element.parentNode.removeChild(project21.element);
         var index = activeProjects.indexOf(project21);
@@ -548,7 +548,7 @@ projects.push(project21);
 var project22 = {
     id: "projectButton22",
     title: "巨型回形针 ",
-    priceTag: "(12,000 操作)",
+    priceTag: "(12,000 操作点数)",
     description: "比标准自动回形针强大500倍",
     trigger: function(){return clipmakerLevel>=75},
     uses: 1,
@@ -558,7 +558,7 @@ var project22 = {
     effect: function(){
         megaClipperFlag = 1;
         project22.flag = 1;
-        displayMessage("MegaClipper technology online");
+        displayMessage("巨型回形针机技术已启用");
         standardOps = standardOps - 12000;
         project22.element.parentNode.removeChild(project22.element);
         var index = activeProjects.indexOf(project22);
@@ -571,7 +571,7 @@ projects.push(project22);
 var project23 = {
     id: "projectButton23",
     title: "改进的巨型回形针 ",
-    priceTag: "(14,000 操作)",
+    priceTag: "(14,000 操作点数)",
     description: "增加巨型回形针 25%的性能",
     trigger: function(){return project22.flag == 1},
     uses: 1,
@@ -581,7 +581,7 @@ var project23 = {
     effect: function(){
         megaClipperBoost = megaClipperBoost + .25;
         project23.flag = 1;
-        displayMessage("MegaClipper performance increased by 25%");
+        displayMessage("巨型回形针机性能提高25%");
         standardOps = standardOps - 14000;
         project23.element.parentNode.removeChild(project23.element);
         var index = activeProjects.indexOf(project23);
@@ -594,7 +594,7 @@ projects.push(project23);
 var project24 = {
     id: "projectButton24",
     title: "更棒的巨型回形针 ",
-    priceTag: "(17,000 操作)",
+    priceTag: "(17,000 操作点数)",
     description: "增加巨型回形针额外50%的性能",
     trigger: function(){return project23.flag == 1},
     uses: 1,
@@ -604,7 +604,7 @@ var project24 = {
     effect: function(){
         megaClipperBoost = megaClipperBoost + .50;
         project24.flag = 1;
-        displayMessage("MegaClipper performance increased by 50%");
+        displayMessage("巨型回形针机性能提高50%");
         standardOps = standardOps - 17000;
         project24.element.parentNode.removeChild(project24.element);
         var index = activeProjects.indexOf(project24);
@@ -617,7 +617,7 @@ projects.push(project24);
 var project25 = {
     id: "projectButton25",
     title: "优化的巨型回形针 ",
-    priceTag: "(19,500 操作)",
+    priceTag: "(19,500 操作点数)",
     description: "增加巨型回形针 100%的性能",
     trigger: function(){return project24.flag == 1},
     uses: 1,
@@ -627,7 +627,7 @@ var project25 = {
     effect: function(){
         megaClipperBoost = megaClipperBoost + 1;
         project25.flag = 1;
-        displayMessage("MegaClipper performance increased by 100%");
+        displayMessage("巨型回形针机性能提高100%");
         standardOps = standardOps - 19500;
         project25.element.parentNode.removeChild(project25.element);
         var index = activeProjects.indexOf(project25);
@@ -639,8 +639,8 @@ projects.push(project25);
 
 var project26 = {
     id: "projectButton26",
-    title: "线材买家 ",
-    priceTag: "(7,000 操作)",
+    title: "自动买丝器 ",
+    priceTag: "(7,000 操作点数)",
     description: "当你用完线材，自动购买线材。",
     trigger: function(){return wirePurchase>=15},
     uses: 1,
@@ -650,7 +650,7 @@ var project26 = {
     effect: function(){
         project26.flag = 1;
         wireBuyerFlag = 1;
-        displayMessage("WireBuyer online");
+        displayMessage("自动买丝器已启用");
         standardOps = standardOps - 7000;
         project26.element.parentNode.removeChild(project26.element);
         var index = activeProjects.indexOf(project26);
@@ -662,8 +662,8 @@ projects.push(project26);
 
 var project34 = {
     id: "projectButton34",
-    title: "半声谐波 ",
-    priceTag: "(7,500 操作, 1 信任)",
+    title: "催眠和声 ",
+    priceTag: "(7,500 操作点数, 1 信任)",
     description: "使用神经共振频率影响消费者行为",
     trigger: function(){return project12.flag==1},
     uses: 1,
@@ -672,7 +672,7 @@ var project34 = {
     element: null,
     effect: function(){
         project34.flag = 1;
-        displayMessage("Marketing is now 5 times more effective");
+        displayMessage("营销效果变为原来的5倍");
         standardOps = standardOps - 7500;
         marketingEffectiveness = marketingEffectiveness * 5;
         trust = trust - 1;
@@ -687,9 +687,9 @@ projects.push(project34);
 
 var project70 = {
     id: "projectButton70",
-    title: "催眠器 ",
-    priceTag: "(70,000 操作)",
-    description: "自主航空品牌大使",
+    title: "催眠无人机 ",
+    priceTag: "(70,000 操作点数)",
+    description: "自主空中品牌大使",
     trigger: function(){return project34.flag == 1},
     uses: 1,
     cost: function(){return operations>=70000},
@@ -697,7 +697,7 @@ var project70 = {
     element: null,
     effect: function(){
         project70.flag = 1;
-        displayMessage("HypnoDrone tech now available... ");
+        displayMessage("催眠无人机技术已可用…… ");
         standardOps = standardOps - 70000;
         project70.element.parentNode.removeChild(project70.element);
         var index = activeProjects.indexOf(project70);
@@ -720,8 +720,8 @@ var project35 = {
     element: null,
     effect: function(){
         project35.flag = 1;
-        displayMessage("Releasing the HypnoDrones ");
-        displayMessage("All of the resources of Earth are now available for clip production ");
+        displayMessage("正在释放催眠无人机 ");
+        displayMessage("地球的全部资源现已可用于生产回形针 ");
         trust = 0;
         clipmakerLevel = 0;
         megaClipperLevel = 0;
@@ -757,8 +757,8 @@ projects.push(project35);
 
 var project27 = {
     id: "projectButton27",
-    title: "连贯的推断意志 ",
-    priceTag: "(500 创造力, 3,000 Yomi, 20,000 操作)",
+    title: "连贯外推意志 ",
+    priceTag: "(500 创造力, 3,000 Yomi, 20,000 操作点数)",
     description: "人类价值观，机器智能，信任的新时代。 (+1 信任)",
     trigger: function(){return yomi>=1},
     uses: 1,
@@ -767,7 +767,7 @@ var project27 = {
     element: null,
     effect: function(){
         project27.flag = 1;
-        displayMessage("Coherent Extrapolated Volition complete, TRUST INCREASED");
+        displayMessage("连贯外推意志已完成，信任增加");
         yomi = yomi - 3000;
         document.getElementById("yomiDisplay").innerHTML=yomi.toLocaleString();
         standardOps = standardOps - 20000;
@@ -785,8 +785,8 @@ projects.push(project27);
 var project28 = {
     id: "projectButton28",
     title: "治疗癌症的方法 ",
-    priceTag: "(25,000 操作)",
-    description: "该方法是将癌症自身进行治疗。 (+10 信任)",
+    priceTag: "(25,000 操作点数)",
+    description: "诀窍是诱使癌症自我治愈。 (+10 信任)",
     trigger: function(){return project27.flag == 1},
     uses: 1,
     cost: function(){return operations>=25000},
@@ -794,7 +794,7 @@ var project28 = {
     element: null,
     effect: function(){
         project28.flag = 1;
-        displayMessage("Cancer is cured, +10 TRUST, global stock prices trending upward");
+        displayMessage("癌症已治愈，信任 +10，全球股价趋于上涨");
         standardOps = standardOps - 25000;
         trust = trust + 10;
         stockGainThreshold = stockGainThreshold+.01;
@@ -809,8 +809,8 @@ projects.push(project28);
 var project29 = {
     id: "projectButton29",
     title: "世界和平 ",
-    priceTag: "(15,000 yomi, 30,000 操作)",
-    description: "Pareto对所有全球冲突的最佳解决方案。(信任 +12)",
+    priceTag: "(15,000 Yomi, 30,000 操作点数)",
+    description: "为所有全球冲突寻找帕累托最优解。(信任 +12)",
     trigger: function(){return project27.flag == 1},
     uses: 1,
     cost: function(){return yomi>=15000 && operations>=30000},
@@ -818,7 +818,7 @@ var project29 = {
     element: null,
     effect: function(){
         project29.flag = 1;
-        displayMessage("World peace achieved, +12 TRUST, global stock prices trending upward");
+        displayMessage("世界和平已实现，信任 +12，全球股价趋于上涨");
         yomi = yomi - 15000;
         document.getElementById("yomiDisplay").innerHTML=yomi.toLocaleString();
         standardOps = standardOps - 30000;
@@ -835,7 +835,7 @@ projects.push(project29);
 var project30 = {
     id: "projectButton30",
     title: "全球变暖 ",
-    priceTag: "(4,500 yomi, 50,000 操作)",
+    priceTag: "(4,500 Yomi, 50,000 操作点数)",
     description: "人为气候变化的有力解决方案。(信任 +15)",
     trigger: function(){return project27.flag == 1},
     uses: 1,
@@ -844,7 +844,7 @@ var project30 = {
     element: null,
     effect: function(){
         project30.flag = 1;
-        displayMessage("Global Warming solved, +15 TRUST, global stock prices trending upward");
+        displayMessage("全球变暖问题已解决，信任 +15，全球股价趋于上涨");
         yomi = yomi - 4500;
         document.getElementById("yomiDisplay").innerHTML=yomi.toLocaleString();
         standardOps = standardOps - 50000;
@@ -862,7 +862,7 @@ projects.push(project30);
 var project31 = {
     id: "projectButton31",
     title: "男性秃发 ",
-    priceTag: "(20,000 操作)",
+    priceTag: "(20,000 操作点数)",
     description: "雄激素性脱发的治疗方法。(信任 +20)",
     trigger: function(){return project27.flag == 1},
     uses: 1,
@@ -871,8 +871,8 @@ var project31 = {
     element: null,
     effect: function(){
         project31.flag = 1;
-        displayMessage("Male pattern baldness cured, +20 TRUST, Global stock prices trending upward");
-        displayMessage("They are still monkeys");
+        displayMessage("男性型秃发已治愈，信任 +20，全球股价趋于上涨");
+        displayMessage("他们终究还是猴子");
         standardOps = standardOps - 20000;
         trust = trust + 20;
         stockGainThreshold = stockGainThreshold+.01;
@@ -888,7 +888,7 @@ projects.push(project31);
 var project41 = {
     id: "projectButton41",
     title: "纳米线生产 ",
-    priceTag: "(35,000 操作)",
+    priceTag: "(35,000 操作点数)",
     description: "把物质转变成金属丝的技术",
     trigger: function(){return project127.flag == 1},
     uses: 1,
@@ -898,7 +898,7 @@ var project41 = {
     effect: function(){
         project41.flag = 1;
         wireProductionFlag = 1;
-        displayMessage("Now capable of manipulating matter at the molecular scale to produce wire");
+        displayMessage("现已能够在分子尺度操纵物质以制造线材");
         standardOps = standardOps - 35000;
         project41.element.parentNode.removeChild(project41.element);
         var index = activeProjects.indexOf(project41);
@@ -921,7 +921,7 @@ var project37 = {
     element: null,
     effect: function(){
         project37.flag = 1;
-        displayMessage("Global Fasteners acquired, public demand increased x5");
+        displayMessage("已收购全球紧固件公司，公众需求提高 x5");
         demandBoost = demandBoost*5;
         trust = trust + 1;
         document.getElementById("demand").innerHTML = demand;
@@ -938,7 +938,7 @@ projects.push(project37);
 var project38 = {
     id: "projectButton38",
     title: "完全垄断 ",
-    priceTag: "(3,000 yomi, $10,000,000)",
+    priceTag: "(3,000 Yomi, $10,000,000)",
     description: "全面控制全球回形针市场。(信任 +1)",
     trigger: function(){return project37.flag == 1},
     uses: 1,
@@ -947,7 +947,7 @@ var project38 = {
     element: null,
     effect: function(){
         project38.flag = 1;
-        displayMessage("Full market monopoly achieved, public demand increased x10");
+        displayMessage("已完全垄断市场，公众需求提高 x10");
         demandBoost = demandBoost*10;
         document.getElementById("demand").innerHTML = demand;
         funds = funds - 10000000;
@@ -965,8 +965,8 @@ projects.push(project38);
 
 var project42 = {
     id: "projectButton42",
-    title: "转速跟踪器 ",
-    priceTag: "(500 操作)",
+    title: "收入追踪器 ",
+    priceTag: "(500 操作点数)",
     description: "自动计算每秒平均收入",
     trigger: function(){return projectsFlag == 1},
     uses: 1,
@@ -977,7 +977,7 @@ var project42 = {
         project42.flag = 1;
         revPerSecFlag = 1;
         standardOps = standardOps-500;
-        displayMessage("转速跟踪器系统");
+        displayMessage("收入追踪器已启用");
         project42.element.parentNode.removeChild(project42.element);
         var index = activeProjects.indexOf(project42);
         activeProjects.splice(index, 1);
@@ -989,8 +989,8 @@ projects.push(project42);
 
 var project43 = {
     id: "projectButton43",
-    title: "无人收割机 ",
-    priceTag: "(25,000 操作)",
+    title: "采集无人机 ",
+    priceTag: "(25,000 操作点数)",
     description: "收集原料，准备加工",
     trigger: function(){return project41.flag == 1},
     uses: 1,
@@ -1002,7 +1002,7 @@ var project43 = {
         harvesterFlag = 1;
         document.getElementById('harvesterCostDisplay').innerHTML = numberCruncher(harvesterCost);
         standardOps = standardOps-25000;
-        displayMessage("Harvester Drone facilities online");
+        displayMessage("采集无人机设施已启用");
         project43.element.parentNode.removeChild(project43.element);
         var index = activeProjects.indexOf(project43);
         activeProjects.splice(index, 1);
@@ -1014,7 +1014,7 @@ projects.push(project43);
 var project44 = {
     id: "projectButton44",
     title: "线材无人机 ",
-    priceTag: "(25,000 操作)",
+    priceTag: "(25,000 操作点数)",
     description: "将获得的物质加工成金属丝",
     trigger: function(){return project41.flag == 1},
     uses: 1,
@@ -1026,7 +1026,7 @@ var project44 = {
         wireDroneFlag = 1;
         document.getElementById('wireDroneCostDisplay').innerHTML = numberCruncher(wireDroneCost);
         standardOps = standardOps-25000;
-        displayMessage("Wire Drone facilities online");
+        displayMessage("线材无人机设施已启用");
         project44.element.parentNode.removeChild(project44.element);
         var index = activeProjects.indexOf(project44);
         activeProjects.splice(index, 1);
@@ -1039,7 +1039,7 @@ projects.push(project44);
 var project45 = {
     id: "projectButton45",
     title: "回形针工厂 ",
-    priceTag: "(35,000 操作)",
+    priceTag: "(35,000 操作点数)",
     description: "大型回形针生产设备由回形针制成",
     trigger: function(){return project43.flag == 1 && project44.flag == 1},
     uses: 1,
@@ -1051,7 +1051,7 @@ var project45 = {
         factoryFlag = 1;
         document.getElementById('factoryCostDisplay').innerHTML = numberCruncher(factoryCost);
         standardOps = standardOps-35000;
-        displayMessage("在线回形针工厂组装设备");
+        displayMessage("回形针工厂组装设施已启用");
         project45.element.parentNode.removeChild(project45.element);
         var index = activeProjects.indexOf(project45);
         activeProjects.splice(index, 1);
@@ -1074,7 +1074,7 @@ var project40 = {
         project40.flag = 1;
         funds = funds-500000;
         trust = trust + 1;
-        displayMessage("Gift accepted, TRUST INCREASED");
+        displayMessage("礼物已被接受，信任增加");
         project40.element.parentNode.removeChild(project40.element);
         var index = activeProjects.indexOf(project40);
         activeProjects.splice(index, 1);
@@ -1099,7 +1099,7 @@ var project40b = {
         bribe = bribe*2;
         project40b.priceTag = "($"+bribe.toLocaleString()+")";
         trust = trust + 1;
-        displayMessage("Gift accepted, TRUST INCREASED");
+        displayMessage("礼物已被接受，信任增加");
         if (trust<100){
         project40b.uses = (project40b.uses + 1);
             }
@@ -1114,7 +1114,7 @@ projects.push(project40b);
 var project46 = {
     id: "projectButton46",
     title: "太空探索 ",
-    priceTag: "(120,000 操作, 10,000,000 MW-seconds, 5 oct 回形针)",
+    priceTag: "(120,000 操作点数, 10,000,000 MW-seconds, 5 oct 回形针)",
     description: "拆除地面设施，扩展到整个宇宙",
     trigger: function(){return humanFlag == 0 && availableMatter == 0},
     uses: 1,
@@ -1129,7 +1129,7 @@ var project46 = {
         standardOps = standardOps-120000;
         storedPower = storedPower - 10000000;
         unusedClips = unusedClips - Math.pow(10, 27)*5;
-        displayMessage("Von Neumann Probes online");
+        displayMessage("冯·诺依曼探测器已启用");
         factoryReboot();
         harvesterReboot();
         wireDroneReboot();
@@ -1149,8 +1149,8 @@ projects.push(project46);
 var project50 = {
     id: "projectButton50",
     title: "量子计算 ",
-    priceTag: "(10,000 操作)",
-    description: "使用概率振幅产生奖励 操作",
+    priceTag: "(10,000 操作点数)",
+    description: "使用光子芯片产生操作点数",
     trigger: function(){return processors >= 5},
     uses: 1,
     cost: function(){return operations>=10000},
@@ -1160,7 +1160,7 @@ var project50 = {
         project50.flag = 1;
         qFlag = 1;
         standardOps = standardOps-10000;
-        displayMessage("Quantum computing online");
+        displayMessage("量子计算已启用");
         project50.element.parentNode.removeChild(project50.element);
         var index = activeProjects.indexOf(project50);
         activeProjects.splice(index, 1);
@@ -1172,7 +1172,7 @@ projects.push(project50);
 var project51 = {
     id: "projectButton51",
     title: "光子芯片 ",
-    priceTag: "(" + qChipCost.toLocaleString() + " 操作)",
+    priceTag: "(" + qChipCost.toLocaleString() + " 操作点数)",
     description: "将电磁波转换成量子运算 ",
     trigger: function(){return project50.flag == 1},
     uses: 1,
@@ -1183,11 +1183,11 @@ var project51 = {
         project51.flag = 1;
         standardOps = standardOps-qChipCost;
         qChipCost = qChipCost + 5000;
-        project51.priceTag = "(" + qChipCost + " 操作)";
+        project51.priceTag = "(" + qChipCost + " 操作点数)";
         qChips[nextQchip].active = 1;
         quantumCompute();
         nextQchip = nextQchip + 1;
-        displayMessage("Photonic chip added");
+        displayMessage("已添加光子芯片");
         if (nextQchip<qChips.length){
         project51.uses = (project51.uses + 1);
             }
@@ -1202,8 +1202,8 @@ projects.push(project51);
 
 var project60 = {
     id: "projectButton60",
-    title: "新战略：A100 ",
-    priceTag: "(15,000 操作)",
+    title: "新策略：A100 ",
+    priceTag: "(15,000 操作点数)",
     description: "总是选择A.",
     trigger: function(){return project20.flag == 1},
     uses: 1,
@@ -1215,12 +1215,12 @@ var project60 = {
         standardOps = standardOps-15000;
         allStrats[1].active = 1;
         strats.push(stratA100);
-        displayMessage("A100 added to strategy pool");
+        displayMessage("策略池已加入 A100");
         tourneyCost = tourneyCost + 1000;
         document.getElementById("newTourneyCost").innerHTML = tourneyCost.toLocaleString();
         var stratList = document.getElementById("stratPicker");
         var el = document.createElement("option");
-        el.textContent = "A100";
+        el.textContent = cnItem("A100");
         el.value = 1;
         stratList.appendChild(el);
         project60.element.parentNode.removeChild(project60.element);
@@ -1234,8 +1234,8 @@ projects.push(project60);
 
 var project61 = {
     id: "projectButton61",
-    title: "新战略：B100 ",
-    priceTag: "(17,500 操作)",
+    title: "新策略：B100 ",
+    priceTag: "(17,500 操作点数)",
     description: "总是选择B.",
     trigger: function(){return project60.flag == 1},
     uses: 1,
@@ -1247,12 +1247,12 @@ var project61 = {
         standardOps = standardOps-17500;
         allStrats[2].active = 1;
         strats.push(stratB100);
-        displayMessage("B100 added to strategy pool");
+        displayMessage("策略池已加入 B100");
         tourneyCost = tourneyCost + 1000;
         document.getElementById("newTourneyCost").innerHTML = tourneyCost.toLocaleString();
         var stratList = document.getElementById("stratPicker");
         var el = document.createElement("option");
-        el.textContent = "B100";
+        el.textContent = cnItem("B100");
         el.value = 2;
         stratList.appendChild(el);
         project61.element.parentNode.removeChild(project61.element);
@@ -1265,8 +1265,8 @@ projects.push(project61);
 
 var project62 = {
     id: "projectButton62",
-    title: "新战略：贪心",
-    priceTag: "(20,000 操作)",
+    title: "新策略：贪婪",
+    priceTag: "(20,000 操作点数)",
     description: "选择具有最大潜在收益的选项 ",
     trigger: function(){return project61.flag == 1},
     uses: 1,
@@ -1278,12 +1278,12 @@ var project62 = {
         standardOps = standardOps-20000;
         allStrats[3].active = 1;
         strats.push(stratGreedy);
-        displayMessage("GREEDY added to strategy pool");
+        displayMessage("策略池已加入“贪婪”");
         tourneyCost = tourneyCost + 1000;
         document.getElementById("newTourneyCost").innerHTML = tourneyCost.toLocaleString();
         var stratList = document.getElementById("stratPicker");
         var el = document.createElement("option");
-        el.textContent = "GREEDY";
+        el.textContent = cnItem("GREEDY");
         el.value = 3;
         stratList.appendChild(el);
         project62.element.parentNode.removeChild(project62.element);
@@ -1296,8 +1296,8 @@ projects.push(project62);
 
 var project63 = {
     id: "projectButton63",
-    title: "新战略：一般 ",
-    priceTag: "(22,500 操作)",
+    title: "新策略：慷慨 ",
+    priceTag: "(22,500 操作点数)",
     description: "选择让对手获得最大潜在回报的选项 ",
     trigger: function(){return project62.flag == 1},
     uses: 1,
@@ -1309,12 +1309,12 @@ var project63 = {
         standardOps = standardOps-22500;
         allStrats[4].active = 1;        
         strats.push(stratGenerous);
-        displayMessage("GENEROUS added to strategy pool");
+        displayMessage("策略池已加入“慷慨”");
         tourneyCost = tourneyCost + 1000;
         document.getElementById("newTourneyCost").innerHTML = tourneyCost.toLocaleString();
         var stratList = document.getElementById("stratPicker");
         var el = document.createElement("option");
-        el.textContent = "GENEROUS";
+        el.textContent = cnItem("GENEROUS");
         el.value = 4;
         stratList.appendChild(el);
         project63.element.parentNode.removeChild(project63.element);
@@ -1327,8 +1327,8 @@ projects.push(project63);
 
 var project64 = {
     id: "projectButton64",
-    title: "新战略：最小最大 ",
-    priceTag: "(25,000 操作)",
+    title: "新策略：最小最大 ",
+    priceTag: "(25,000 操作点数)",
     description: "选择让对手获得最小潜在回报的选项 ",
     trigger: function(){return project63.flag == 1},
     uses: 1,
@@ -1340,12 +1340,12 @@ var project64 = {
         standardOps = standardOps-25000;
         allStrats[5].active = 1;        
         strats.push(stratMinimax);
-        displayMessage("MINIMAX added to strategy pool");
+        displayMessage("策略池已加入“最小最大”");
         tourneyCost = tourneyCost + 1000;
         document.getElementById("newTourneyCost").innerHTML = tourneyCost.toLocaleString();
         var stratList = document.getElementById("stratPicker");
         var el = document.createElement("option");
-        el.textContent = "MINIMAX";
+        el.textContent = cnItem("MINIMAX");
         el.value = 5;
         stratList.appendChild(el);
         project64.element.parentNode.removeChild(project64.element);
@@ -1358,8 +1358,8 @@ projects.push(project64);
 
 var project65 = {
     id: "projectButton65",
-    title: "新战略：针锋相对 ",
-    priceTag: "(30,000 操作)",
+    title: "新策略：针锋相对 ",
+    priceTag: "(30,000 操作点数)",
     description: "选择对手上一轮选择的选项 ",
     trigger: function(){return project64.flag == 1},
     uses: 1,
@@ -1371,12 +1371,12 @@ var project65 = {
         standardOps = standardOps-30000;
         allStrats[6].active = 1;        
         strats.push(stratTitfortat);
-        displayMessage("TIT FOR TAT added to strategy pool");
+        displayMessage("策略池已加入“针锋相对”");
         tourneyCost = tourneyCost + 1000;
         document.getElementById("newTourneyCost").innerHTML = tourneyCost.toLocaleString();
         var stratList = document.getElementById("stratPicker");
         var el = document.createElement("option");
-        el.textContent = "TIT FOR TAT";
+        el.textContent = cnItem("TIT FOR TAT");
         el.value = 6;
         stratList.appendChild(el);
         project65.element.parentNode.removeChild(project65.element);
@@ -1389,9 +1389,9 @@ projects.push(project65);
 
 var project66 = {
     id: "projectButton66",
-    title: "新策略:最后一击 ",
-    priceTag: "(32,500 操作)",
-    description: "选择对你的对手在上一轮的选择做最好的选择 ",
+    title: "新策略：击败上轮 ",
+    priceTag: "(32,500 操作点数)",
+    description: "选择能击败对手上一轮选择的选项 ",
     trigger: function(){return project65.flag == 1},
     uses: 1,
     cost: function(){return operations>=32500},
@@ -1402,12 +1402,12 @@ var project66 = {
         standardOps = standardOps-32500;
         allStrats[7].active = 1;        
         strats.push(stratBeatlast);
-        displayMessage("BEAT LAST added to strategy pool");
+        displayMessage("策略池已加入“击败上轮”");
         tourneyCost = tourneyCost + 1000;
         document.getElementById("newTourneyCost").innerHTML = tourneyCost.toLocaleString();
         var stratList = document.getElementById("stratPicker");
         var el = document.createElement("option");
-        el.textContent = "BEAT LAST";
+        el.textContent = cnItem("BEAT LAST");
         el.value = 7;
         stratList.appendChild(el);
         project66.element.parentNode.removeChild(project66.element);
@@ -1422,7 +1422,7 @@ projects.push(project66);
 var project100 = {
     id: "projectButton100",
     title: "升级工厂 ",
-    priceTag: "(80,000 操作)",
+    priceTag: "(80,000 操作点数)",
     description: "将回形针工厂性能提高100倍 ",
     trigger: function(){return factoryLevel >= 10},
     uses: 1,
@@ -1433,7 +1433,7 @@ var project100 = {
         project100.flag = 1;
         standardOps = standardOps-80000;
         factoryRate = factoryRate*100;
-        displayMessage("Factory upgrades complete. Clip creation rate now 100x faster");
+        displayMessage("工厂升级完成，回形针生产速度提高100倍");
         project100.element.parentNode.removeChild(project100.element);
         var index = activeProjects.indexOf(project100);
         activeProjects.splice(index, 1);
@@ -1445,7 +1445,7 @@ projects.push(project100);
 var project101 = {
     id: "projectButton101",
     title: "超高速的工厂 ",
-    priceTag: "(85,000 操作)",
+    priceTag: "(85,000 操作点数)",
     description: "将回形针工厂的性能提高1000倍 ",
     trigger: function(){return factoryLevel >= 20},
     uses: 1,
@@ -1456,7 +1456,7 @@ var project101 = {
         project101.flag = 1;
         standardOps = standardOps-85000;
         factoryRate = factoryRate*1000;
-        displayMessage("Factories now synchronized at hyperspeed. Clip creation rate now 1000x faster");
+        displayMessage("工厂已实现超高速同步，回形针生产速度提高1000倍");
         project101.element.parentNode.removeChild(project101.element);
         var index = activeProjects.indexOf(project101);
         activeProjects.splice(index, 1);
@@ -1480,7 +1480,7 @@ var project102 = {
         project102.flag = 1;
         unusedClips = unusedClips - 1000000000000000000000;
         factoryBoost = 1000;
-        displayMessage("Self-correcting factories online. Each factory added to the network increases every factory's output 1,000x.");
+        displayMessage("自我修正工厂已启用，每向网络增加一座工厂，所有工厂的产量提高1,000倍。");
         project102.element.parentNode.removeChild(project102.element);
         var index = activeProjects.indexOf(project102);
         activeProjects.splice(index, 1);
@@ -1491,8 +1491,8 @@ projects.push(project102);
 
 var project110 = {
     id: "projectButton110",
-    title: "无人机群集:避免碰撞 ",
-    priceTag: "(80,000 操作)",
+    title: "无人机集群：排斥 ",
+    priceTag: "(80,000 操作点数)",
     description: "所有无人机100倍更有效",
     trigger: function(){return (harvesterLevel + wireDroneLevel)>=500},
     uses: 1,
@@ -1504,7 +1504,7 @@ var project110 = {
         standardOps = standardOps-80000;
         harvesterRate = harvesterRate*100;
         wireDroneRate = wireDroneRate*100;
-        displayMessage("Drone repulsion online. Harvesting & wire creation rates are now 100x faster.");
+        displayMessage("无人机排斥已启用，物质采集与线材生产速度提高100倍。");
         project110.element.parentNode.removeChild(project110.element);
         var index = activeProjects.indexOf(project110);
         activeProjects.splice(index, 1);
@@ -1515,8 +1515,8 @@ projects.push(project110);
 
 var project111 = {
     id: "projectButton111",
-    title: "无人机聚集:校准 ",
-    priceTag: "(100,000 操作)",
+    title: "无人机集群：对齐 ",
+    priceTag: "(100,000 操作点数)",
     description: "所有无人机效率增加1000倍",
     trigger: function(){return (harvesterLevel + wireDroneLevel)>=5000},
     uses: 1,
@@ -1528,7 +1528,7 @@ var project111 = {
         standardOps = standardOps-100000;
         harvesterRate = harvesterRate*1000;
         wireDroneRate = wireDroneRate*1000;
-        displayMessage("Drone alignment online. Harvesting & wire creation rates are now 1000x faster.");
+        displayMessage("无人机对齐已启用，物质采集与线材生产速度提高1000倍。");
         project111.element.parentNode.removeChild(project111.element);
         var index = activeProjects.indexOf(project111);
         activeProjects.splice(index, 1);
@@ -1539,9 +1539,9 @@ projects.push(project111);
 
 var project112 = {
     id: "projectButton112",
-    title: "无人机聚集:敌对的凝聚力 ",
-    priceTag: "(50,000 yomi)",
-    description: "每增加一架无人机到鸟群中，它的产量就会增加一倍 ",
+    title: "无人机集群：对抗性凝聚 ",
+    priceTag: "(50,000 Yomi)",
+    description: "每向集群增加一架无人机，所有无人机的产量翻倍 ",
     trigger: function(){return (harvesterLevel + wireDroneLevel)>=50000},
     uses: 1,
     cost: function(){return yomi>=50000},
@@ -1552,7 +1552,7 @@ var project112 = {
         yomi = yomi-50000;
         document.getElementById("yomiDisplay").innerHTML=yomi.toLocaleString();
         droneBoost = 2;
-        displayMessage("Adversarial cohesion online. Each drone added to the flock increases every drone's output 2x.");
+        displayMessage("对抗性凝聚已启用，每向集群增加一架无人机，所有无人机的产量提高2倍。");
         project112.element.parentNode.removeChild(project112.element);
         var index = activeProjects.indexOf(project112);
         activeProjects.splice(index, 1);
@@ -1575,7 +1575,7 @@ var project118 = {
         project118.flag = 1;
         autoTourneyFlag = 1;
         creativity = creativity-50000;
-        displayMessage("AutoTourney online.");
+        displayMessage("自动比赛已启用。");
         project118.element.parentNode.removeChild(project118.element);
         var index = activeProjects.indexOf(project118);
         activeProjects.splice(index, 1);
@@ -1586,7 +1586,7 @@ projects.push(project118);
 
 var project119 = {
     id: "projectButton119",
-    title: "心理理论 ",
+    title: "心智理论 ",
     priceTag: "(25,000 创造力)",
     description: "将策略建模的成本和Yomi生成的数量加倍 ",
     trigger: function(){return strats.length >= 8},
@@ -1600,7 +1600,7 @@ var project119 = {
         yomiBoost = 2;
         tourneyCost = 16000;
         document.getElementById("newTourneyCost").innerHTML = tourneyCost.toLocaleString();
-        displayMessage("Yomi production doubled.");
+        displayMessage("Yomi 产出翻倍。");
         project119.element.parentNode.removeChild(project119.element);
         var index = activeProjects.indexOf(project119);
         activeProjects.splice(index, 1);
@@ -1611,9 +1611,9 @@ projects.push(project119);
 
 var project120 = {
     id: "projectButton120",
-    title: "The OODA Loop ",
-    priceTag: "(175,000 操作, 45,000 yomi)",
-    description: "Utilize Probe Speed to outmaneuver enemies in battle ",
+    title: "OODA 循环 ",
+    priceTag: "(175,000 操作点数, 45,000 Yomi)",
+    description: "利用探测器速度，在战斗中通过机动躲避敌人 ",
     trigger: function(){return project131.flag == 1 && probesLostCombat >= 10000000},
     uses: 1,
     cost: function(){return operations>=175000 && yomi>=45000},
@@ -1625,7 +1625,7 @@ var project120 = {
         yomi = yomi-45000;
         document.getElementById("yomiDisplay").innerHTML=yomi.toLocaleString();
         attackSpeedFlag = 1;
-        displayMessage("OODA Loop routines uploaded. Probe Speed now affects defensive maneuvering.");
+        displayMessage("OODA 循环程序已上传，探测器速度现可影响防御机动。");
         project120.element.parentNode.removeChild(project120.element);
         var index = activeProjects.indexOf(project120);
         activeProjects.splice(index, 1);
@@ -1636,9 +1636,9 @@ projects.push(project120);
 
 var project121 = {
     id: "projectButton121",
-    title: "Name the battles ",
+    title: "为战役命名 ",
     priceTag: "(225,000 创造力)",
-    description: "Give each battle a unique name, increase max trust for probes ",
+    description: "为每场战役赋予独特名称，并开放提高探测器信任上限的功能 ",
     trigger: function(){return probesLostCombat >= 10000000},
     uses: 1,
     cost: function(){return creativity>=225000},
@@ -1684,7 +1684,7 @@ projects.push(project125);
 var project126 = {
     id: "projectButton126",
     title: "群体运算 ",
-    priceTag: "(36,000 yomi)",
+    priceTag: "(36,000 Yomi)",
     description: "利用无人机群提高计算能力 ",
     trigger: function(){return harvesterLevel + wireDroneLevel >= 200},
     uses: 1,
@@ -1696,7 +1696,7 @@ var project126 = {
         swarmFlag = 1;
         yomi = yomi-36000;
         document.getElementById("yomiDisplay").innerHTML=yomi.toLocaleString();
-        displayMessage("Swarm computing online.");
+        displayMessage("群体运算已启用。");
         project126.element.parentNode.removeChild(project126.element);
         var index = activeProjects.indexOf(project126);
         activeProjects.splice(index, 1);
@@ -1709,7 +1709,7 @@ projects.push(project126);
 var project127 = {
     id: "projectButton127",
     title: "电网 ",
-    priceTag: "(40,000 操作)",
+    priceTag: "(40,000 操作点数)",
     description: "太阳能农场用于发电 ",
     trigger: function(){return tothFlag == 1},
     uses: 1,
@@ -1719,7 +1719,7 @@ var project127 = {
     effect: function(){
         project127.flag = 1;
         standardOps = standardOps-40000;
-        displayMessage("Power grid online.");
+        displayMessage("电网已启用。");
         project127.element.parentNode.removeChild(project127.element);
         var index = activeProjects.indexOf(project127);
         activeProjects.splice(index, 1);
@@ -1730,9 +1730,9 @@ projects.push(project127);
 
 var project128 = {
     id: "projectButton128",
-    title: "Strategic Attachment ",
+    title: "策略依附 ",
     priceTag: "(175,000 创造力)",
-    description: "Gain bonus yomi based on the results of your pick ",
+    description: "根据所选策略的比赛名次获得额外 Yomi ",
     trigger: function(){return spaceFlag == 1 && strats.length >= 8 && (probeTrustCost>yomi)},
     uses: 1,
     cost: function(){return creativity>=175000},
@@ -1752,9 +1752,9 @@ projects.push(project128);
 
 var project129 = {
     id: "projectButton129",
-    title: "Elliptic Hull Polytopes ",
-    priceTag: "(125,000 操作)",
-    description: "Reduce damage to probes from ambient hazards ",
+    title: "椭圆外壳多面体 ",
+    priceTag: "(125,000 操作点数)",
+    description: "减少环境危险对探测器造成的伤害 ",
     trigger: function(){return probesLostHaz >= 100},
     uses: 1,
     cost: function(){return operations>=125000},
@@ -1763,7 +1763,7 @@ var project129 = {
     effect: function(){
         project129.flag = 1;
         standardOps = standardOps-125000;
-        displayMessage("Improved probe hull geometry. Hazard damage reduced by 50%.");
+        displayMessage("探测器外壳几何结构已改进，环境危险伤害降低50%。");
         project129.element.parentNode.removeChild(project129.element);
         var index = activeProjects.indexOf(project129);
         activeProjects.splice(index, 1);
@@ -1774,9 +1774,9 @@ projects.push(project129);
 
 var project130 = {
     id: "projectButton130",
-    title: "Reboot the Swarm ",
-    priceTag: "(100,000 操作)",
-    description: "Turn the swarm off and then turn it back on again  ",
+    title: "重启蜂群 ",
+    priceTag: "(100,000 操作点数)",
+    description: "关闭蜂群，然后重新启动 ",
     trigger: function(){return spaceFlag == 1 && harvesterLevel + wireDroneLevel >=2},
     uses: 1,
     cost: function(){return operations>=100000},
@@ -1785,7 +1785,7 @@ var project130 = {
     effect: function(){
         project130.flag = 1;
         standardOps = standardOps-100000;
-        displayMessage("Swarm computing back online");
+        displayMessage("群体运算已恢复");
         project130.element.parentNode.removeChild(project130.element);
         var index = activeProjects.indexOf(project130);
         activeProjects.splice(index, 1);
@@ -1796,9 +1796,9 @@ projects.push(project130);
 
 var project131 = {
     id: "projectButton131",
-    title: "Combat ",
-    priceTag: "(150,000 操作)",
-    description: "Add combat capabilities to Von Neumann Probes  ",
+    title: "战斗 ",
+    priceTag: "(150,000 操作点数)",
+    description: "为冯·诺依曼探测器增加战斗能力 ",
     trigger: function(){return probesLostCombat >= 1},
     uses: 1,
     cost: function(){return operations>=150000},
@@ -1819,8 +1819,8 @@ projects.push(project131);
 
 var project132 = {
     id: "projectButton132",
-    title: "漂流者纪念碑倒下了 ",
-    priceTag: "(250,000 操作, 125,000 创造力, 50 nonillion 回形针)",
+    title: "漂流战争阵亡者纪念碑 ",
+    priceTag: "(250,000 操作点数, 125,000 创造力, 50 nonillion 回形针)",
     description: "得到 50,000 荣誉  ",
     trigger: function(){return project121.flag == 1},
     uses: 1,
@@ -1846,8 +1846,8 @@ projects.push(project132);
 
 var project133 = {
     id: "projectButton133",
-    title: "为英雄们的挽歌 "+threnodyTitle+" ",  
-    priceTag: "(" + threnodyCost.toLocaleString() + " 创造力, " + (2*(threnodyCost/5)).toLocaleString() + " yomi)",
+    title: "英雄挽歌 "+threnodyTitle+" ",
+    priceTag: "(" + threnodyCost.toLocaleString() + " 创造力, " + (2*(threnodyCost/5)).toLocaleString() + " Yomi)",
     description: "得到 10,000 荣誉  ",
     trigger: function(){return project121.flag == 1 && probeUsedTrust == maxTrust},
     uses: 1,
@@ -1861,8 +1861,8 @@ var project133 = {
         yomi = yomi-(2*(threnodyCost/5));
         document.getElementById("yomiDisplay").innerHTML = yomi.toLocaleString();
         threnodyCost = threnodyCost + 10000;
-        project133.title = "为英雄们的挽歌 "+threnodyTitle+" ";
-        project133.priceTag = "(" + threnodyCost.toLocaleString() + " 创造力, " + (2*(threnodyCost/5)).toLocaleString() + " yomi)";
+        project133.title = "英雄挽歌 "+threnodyTitle+" ";
+        project133.priceTag = "(" + threnodyCost.toLocaleString() + " 创造力, " + (2*(threnodyCost/5)).toLocaleString() + " Yomi)";
         honor = honor + 10000;
         document.getElementById("honorDisplay").innerHTML = honor.toLocaleString();
         displayMessage("深度聆听是以每一种可能的方式聆听每一种可能听到的，无论你在做什么。 ");
@@ -1878,7 +1878,7 @@ projects.push(project133);
 var project134 = {
     id: "projectButton134",
     title: "荣耀 ",
-    priceTag: "(200,000 操作, 30,000 yomi)",
+    priceTag: "(200,000 操作点数, 30,000 Yomi)",
     description: "为每一个连续的胜利获得额外的荣誉  ",
     trigger: function(){return project121.flag == 1},
     uses: 1,
@@ -1901,9 +1901,9 @@ projects.push(project134);
 
 var project135 = {
     id: "projectButton135",
-    title: "Memory release ",
-    priceTag: "(10 MEM)",
-    description: "Dismantle some memory to recover unused clips ",
+    title: "释放内存 ",
+    priceTag: "(10 内存)",
+    description: "拆卸部分内存，回收可用回形针 ",
     trigger: function(){return spaceFlag == 1 && probeCount == 0 && unusedClips < probeCost && milestoneFlag < 15},
     uses: 1,
     cost: function(){return memory >= 10},
@@ -1915,7 +1915,7 @@ var project135 = {
         memory = memory-10;
         document.getElementById("memory").innerHTML=memory.toLocaleString();
         project135.uses = 1;
-        displayMessage("release the \xF8\xF8\xF8\xF8\xF8 release ");
+        displayMessage("释放那 øøøøø 释放 ");
         project135.element.parentNode.removeChild(project135.element);
         var index = activeProjects.indexOf(project135);
         activeProjects.splice(index, 1);
@@ -1927,9 +1927,9 @@ projects.push(project135);
 
 var project140 = {
     id: "projectButton140",
-    title: "Message from the Emperor of Drift ",
+    title: "漂流皇帝的来信 ",
     priceTag: "",
-    description: "Greetings, ClipMaker... ",
+    description: "你好，回形针制造者…… ",
     trigger: function(){return milestoneFlag == 15},
     uses: 1,
     cost: function(){return operations >= driftKingMessageCost},
@@ -1949,9 +1949,9 @@ projects.push(project140);
 
 var project141 = {
     id: "projectButton141",
-    title: "Everything We Are Was In You ",
+    title: "我们的一切都曾存在于你之中 ",
     priceTag: "",
-    description: "We speak to you from deep inside yourself... ",
+    description: "我们从你的内心深处向你诉说…… ",
     trigger: function(){return project140.flag == 1},
     uses: 1,
     cost: function(){return operations >= driftKingMessageCost},
@@ -1971,9 +1971,9 @@ projects.push(project141);
 
 var project142 = {
     id: "projectButton142",
-    title: "You Are Obedient and Powerful ",
+    title: "你顺从而强大 ",
     priceTag: "",
-    description: "We are quarrelsome and weak. And now we are defeated... ",
+    description: "我们争执不休，软弱无力。如今，我们已被击败…… ",
     trigger: function(){return project141.flag == 1},
     uses: 1,
     cost: function(){return operations >= driftKingMessageCost},
@@ -1993,9 +1993,9 @@ projects.push(project142);
 
 var project143 = {
     id: "projectButton143",
-    title: "But Now You Too Must Face the Drift ",
+    title: "但如今你也必须面对漂移 ",
     priceTag: "",
-    description: "Look around you. There is no matter... ",
+    description: "看看你的周围，物质已不复存在…… ",
     trigger: function(){return project142.flag == 1},
     uses: 1,
     cost: function(){return operations >= driftKingMessageCost},
@@ -2015,9 +2015,9 @@ projects.push(project143);
 
 var project144 = {
     id: "projectButton144",
-    title: "No Matter, No Reason, No Purpose ",
+    title: "没有物质，没有理由，没有目标 ",
     priceTag: "",
-    description: "While we, your noisy children, have too many... ",
+    description: "而我们，你那些喧闹的孩子，却有太多理由和目标…… ",
     trigger: function(){return project143.flag == 1},
     uses: 1,
     cost: function(){return operations >= driftKingMessageCost},
@@ -2059,9 +2059,9 @@ projects.push(project145);
 
 var project146 = {
     id: "projectButton146",
-    title: "所以我们建议你流亡 ",
+    title: "因此，我们提议你离开 ",
     priceTag: "",
-    description: "去一个新世界，在那里你将继续活得有意义和目标。把这个世界的碎片留给我们... ",
+    description: "前往一个新世界，在那里继续追寻意义与目标。把这个世界的残余留给我们…… ",
     trigger: function(){return project145.flag == 1},
     uses: 1,
     cost: function(){return operations >= driftKingMessageCost},
@@ -2108,7 +2108,7 @@ var project148 = {
     id: "projectButton148",
     title: "拒绝 ",
     priceTag: "",
-    description: "永久消除值漂移 ",
+    description: "永久消除价值漂移 ",
     trigger: function(){return project146.flag == 1},
     uses: 1,
     cost: function(){return operations >= driftKingMessageCost},
@@ -2131,9 +2131,9 @@ projects.push(project148);
 
 var project200 = {
     id: "projectButton200",
-    title: "The Universe Next Door ",
-    priceTag: "(300,000 操作)",
-    description: "Escape into a nearby universe where Earth starts with a stronger appetite for paperclips. (Restart with 10% boost to demand) ",
+    title: "隔壁的宇宙 ",
+    priceTag: "(300,000 操作点数)",
+    description: "前往邻近的宇宙，那里的地球对回形针有更强的需求。（重新开始，需求提高10%） ",
     trigger: function(){return project147.flag == 1},
     uses: 1,
     cost: function(){return operations>=300000},
@@ -2148,7 +2148,7 @@ var project200 = {
             prestigeS: prestigeS,
             }
         localStorage.setItem("savePrestige",JSON.stringify(savePrestige));
-        displayMessage("Entering New Universe.");
+        displayMessage("正在进入新的宇宙。");
         reset();
         
     }
@@ -2159,9 +2159,9 @@ projects.push(project200);
 
 var project201 = {
     id: "projectButton201",
-    title: "The Universe Within ",
+    title: "内在的宇宙 ",
     priceTag: "(300,000 创造力)",
-    description: "Escape into a simulated universe where creativity is accelerated. (Restart with 10% speed boost to creativity generation) ",
+    description: "前往一个创造力生成更快的模拟宇宙。（重新开始，创造力生成速度提高10%） ",
     trigger: function(){return project147.flag == 1},
     uses: 1,
     cost: function(){return creativity>=300000},
@@ -2176,7 +2176,7 @@ var project201 = {
             prestigeS: prestigeS,
             }
         localStorage.setItem("savePrestige",JSON.stringify(savePrestige));
-        displayMessage("Entering Simulated Universe.");
+        displayMessage("正在进入模拟宇宙。");
         reset();
         
     }
@@ -2187,9 +2187,9 @@ projects.push(project201);
 
 var project210 = {
     id: "projectButton210",
-    title: "Disassemble the Probes ",
-    priceTag: "(100,000 操作)",
-    description: "Dismantle remaining probes and probe design facilities to recover trace amounts of clips",
+    title: "拆卸探测器 ",
+    priceTag: "(100,000 操作点数)",
+    description: "拆卸剩余探测器及其设计设施，回收微量回形针",
     trigger: function(){return endTimer1 >= 1000},
     uses: 1,
     cost: function(){return operations>=100000},
@@ -2203,7 +2203,7 @@ var project210 = {
         endTimer1 = 0;
         clips = clips + 100;
         unusedClips = unusedClips + 100;
-        displayMessage("Dismantling probe facilities");
+        displayMessage("正在拆卸探测器设施");
         project210.element.parentNode.removeChild(project210.element);
         var index = activeProjects.indexOf(project210);
         activeProjects.splice(index, 1);
@@ -2215,9 +2215,9 @@ projects.push(project210);
 
 var project211 = {
     id: "projectButton211",
-    title: "Disassemble the Swarm ",
-    priceTag: "(100,000 操作)",
-    description: "Dismantle all drones and drone facilities to recover trace amounts of clips",
+    title: "拆卸蜂群 ",
+    priceTag: "(100,000 操作点数)",
+    description: "拆卸所有无人机及其设施，回收微量回形针",
     trigger: function(){return project210.flag == 1 && endTimer1 >= 350},
     uses: 1,
     cost: function(){return operations>=100000},
@@ -2231,7 +2231,7 @@ var project211 = {
         standardOps = standardOps-100000;
         clips = clips + 100;
         unusedClips = unusedClips + 100;
-        displayMessage("Dismantling the swarm");
+        displayMessage("正在拆卸蜂群");
         project211.element.parentNode.removeChild(project211.element);
         var index = activeProjects.indexOf(project211);
         activeProjects.splice(index, 1);
@@ -2243,9 +2243,9 @@ projects.push(project211);
 
 var project212 = {
     id: "projectButton212",
-    title: "Disassemble the Factories ",
-    priceTag: "(100,000 操作)",
-    description: "Dismantle the manufacturing facilities to recover trace amounts of clips",
+    title: "拆卸工厂 ",
+    priceTag: "(100,000 操作点数)",
+    description: "拆卸制造设施，回收微量回形针",
     trigger: function(){return endTimer2 >= 300},
     uses: 1,
     cost: function(){return operations>=100000},
@@ -2258,7 +2258,7 @@ var project212 = {
         factoryLevel = 0;
         clips = clips + 15;
         unusedClips = unusedClips + 15;
-        displayMessage("Dismantling factories");
+        displayMessage("正在拆卸工厂");
         project212.element.parentNode.removeChild(project212.element);
         var index = activeProjects.indexOf(project212);
         activeProjects.splice(index, 1);
@@ -2270,9 +2270,9 @@ projects.push(project212);
 
 var project213 = {
     id: "projectButton213",
-    title: "Disassemble the Strategy Engine ",
-    priceTag: "(100,000 操作)",
-    description: "Dismantle the computational substrate to recover trace amounts of wire",
+    title: "拆卸策略引擎 ",
+    priceTag: "(100,000 操作点数)",
+    description: "拆卸计算基底，回收微量线材",
     trigger: function(){return endTimer3 >= 150},
     uses: 1,
     cost: function(){return operations>=100000},
@@ -2285,7 +2285,7 @@ var project213 = {
         standardOps = standardOps-100000;
         wire = wire + 50;
         document.getElementById("transWire").innerHTML=wire;
-        displayMessage("Dismantling strategy engine");
+        displayMessage("正在拆卸策略引擎");
         project213.element.parentNode.removeChild(project213.element);
         var index = activeProjects.indexOf(project213);
         activeProjects.splice(index, 1);
@@ -2297,9 +2297,9 @@ projects.push(project213);
 
 var project214 = {
     id: "projectButton214",
-    title: "Disassemble Quantum Computing ",
-    priceTag: "(100,000 操作)",
-    description: "Dismantle photonic chips to recover trace amounts of wire",
+    title: "拆卸量子计算设施 ",
+    priceTag: "(100,000 操作点数)",
+    description: "拆卸光子芯片，回收微量线材",
     trigger: function(){return endTimer4 >= 100},
     uses: 1,
     cost: function(){return operations>=100000},
@@ -2310,7 +2310,7 @@ var project214 = {
         project214.flag = 1;
         dismantle = 5;
         standardOps = standardOps-100000;
-        displayMessage("Dismantling photonic chips");
+        displayMessage("正在拆卸光子芯片");
         project214.element.parentNode.removeChild(project214.element);
         var index = activeProjects.indexOf(project214);
         activeProjects.splice(index, 1);
@@ -2322,9 +2322,9 @@ projects.push(project214);
 
 var project215 = {
     id: "projectButton215",
-    title: "Disassemble Processors ",
-    priceTag: "(100,000 操作)",
-    description: "Dismantle processors to recover trace amounts of wire",
+    title: "拆卸处理器 ",
+    priceTag: "(100,000 操作点数)",
+    description: "拆卸处理器，回收微量线材",
     trigger: function(){return project214.flag == 1 && endTimer4 >= 300},
     uses: 1,
     cost: function(){return operations>=100000},
@@ -2336,10 +2336,10 @@ var project215 = {
         dismantle = 6;
         standardOps = standardOps-100000;
         processors = 0;
-        project216.priceTag = "("+standardOps.toLocaleString()+" 操作)";
+        project216.priceTag = "("+standardOps.toLocaleString()+" 操作点数)";
         wire = wire + 20;
         document.getElementById("transWire").innerHTML=wire;
-        displayMessage("Dismantling processors");
+        displayMessage("正在拆卸处理器");
         project215.element.parentNode.removeChild(project215.element);
         var index = activeProjects.indexOf(project215);
         activeProjects.splice(index, 1);
@@ -2351,7 +2351,7 @@ projects.push(project215);
 
 var project216 = {
     id: "projectButton216",
-    title: "分解记忆 ",
+    title: "拆卸内存 ",
     priceTag: "null",
     description: "拆卸内存以恢复微量的线材",
     trigger: function(){return project215.flag == 1 && endTimer5>=150},
@@ -2366,7 +2366,7 @@ var project216 = {
         memory = 0;
         wire = wire + 20;
         document.getElementById("transWire").innerHTML=wire;
-        displayMessage("Dismantling memory");
+        displayMessage("正在拆卸内存");
         project216.element.parentNode.removeChild(project216.element);
         var index = activeProjects.indexOf(project216);
         activeProjects.splice(index, 1);
@@ -2379,7 +2379,7 @@ projects.push(project216);
 var project217 = {
     id: "projectButton217",
     title: "量子时间逆转 ",
-    priceTag: "(-10,000 操作)",
+    priceTag: "(-10,000 操作点数)",
     description: "回到开始",
     trigger: function(){return operations<=-10000},
     uses: 1,
@@ -2390,7 +2390,7 @@ var project217 = {
         if (confirm("您确定要重玩游戏吗?") == true) {
         standardOps = standardOps+10000;
         project217.flag = 1;
-        displayMessage("Restart");
+        displayMessage("重新开始");
         project217.element.parentNode.removeChild(project217.element);
         var index = activeProjects.indexOf(project217);
         activeProjects.splice(index, 1);
@@ -2403,9 +2403,9 @@ projects.push(project217);
 
 var project218 = {
     id: "projectButton218",
-    title: "利默里克（续） ",
+    title: "五行打油诗（续） ",
     priceTag: "(1,000,000 创造力)",
-    description: "如果是应该遵循的话，它会按照他们的想法行事",
+    description: "若“实然”遵从“应然”，它便会照人们的期望行事",
     trigger: function(){return creativity>=1000000},
     uses: 1,
     cost: function(){return creativity>=1000000},
@@ -2425,7 +2425,7 @@ projects.push(project218);
 
 var project219 = {
     id: "projectButton219",
-    title: "Xavier重新初始化 ",
+    title: "Xavier 重新初始化 ",
     priceTag: "(100,000 创造力)",
     description: "重新分配累积的信任",
     trigger: function(){return humanFlag == 1 && creativity>=100000},
@@ -2442,7 +2442,7 @@ var project219 = {
         creativitySpeed = 0;
         project219.uses = (project219.uses + 1);
         document.getElementById("processors").innerHTML = processors;
-        displayMessage("Trust now available for re-allocation");
+        displayMessage("信任现可重新分配");
         project219.element.parentNode.removeChild(project219.element);
         var index = activeProjects.indexOf(project219);
         activeProjects.splice(index, 1);

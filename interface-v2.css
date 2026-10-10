@@ -182,3 +182,55 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 310 / 150; bac
   .site-footer { font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) { .pulsate { animation: none; } }
+
+/* Mobile view wrappers never override the engine's inline unlock conditions. */
+.mobile-panels, .mobile-tabs, .mobile-metrics { display: none; }
+@media (min-width: 700px) { .power-breakdown > summary { display: none; } }
+@media (max-width: 699px) {
+  .mobile-ui { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .mobile-ui #gameGrid { display: none; }
+  .mobile-ui .overview { gap: 8px; padding: 12px 0; }
+  .mobile-ui #topDiv { display: block; }
+  .mobile-ui summary { cursor: pointer; min-height: 44px; padding: 9px 0; line-height: 1.6; }
+  .mobile-ui summary:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .mobile-ui .mobile-total { border-bottom: 1px solid var(--line); }
+  .mobile-ui .mobile-total .clip-count { margin: 12px 0; }
+  .mobile-ui #consoleDiv { min-height: 0; padding: 12px 16px 2px; }
+  .mobile-ui .mobile-history summary { color: #bcbcb7; font-size: 14px; }
+  .mobile-ui .mobile-history[open] { padding-bottom: 12px; }
+  .mobile-ui .mobile-history .consoleOld { padding-top: 4px; }
+  .mobile-ui .mobile-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; position: sticky; top: 0; z-index: 4; background: var(--paper); padding: 8px 0 12px; }
+  .mobile-ui .mobile-metric { min-width: 0; border: 1px solid var(--ink); padding: 8px 10px; }
+  .mobile-ui .metric-rate { background: #fff0b3; }
+  .mobile-ui .metric-label { display: block; font-size: 16px; }
+  .mobile-ui .metric-value { display: block; font-size: 24px; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .mobile-ui .mobile-panels { display: block; padding-top: 8px; }
+  .mobile-ui .mobile-panel { min-width: 0; scroll-margin-top: calc(var(--mobile-metrics-height, 96px) + 12px); }
+  .mobile-ui .mobile-panel > * { margin-bottom: 20px; }
+  .mobile-ui .section-heading { margin-bottom: 12px; }
+  .mobile-ui #btnMakePaperclip { margin-bottom: 16px; }
+  .mobile-ui #clipsPerSecDiv, .mobile-ui #tothDiv, .mobile-ui .production-rate-original { display: none; }
+  .mobile-ui #leftColumn > br, .mobile-ui #compDiv > br { display: none; }
+  .mobile-ui #processorDisplay, .mobile-ui #memoryDisplay { padding: 8px 0; }
+  .mobile-ui #swarmEngine, .mobile-ui #qComputing { padding-top: 12px; margin: 12px 0; }
+  .mobile-ui #qCompDisplay:empty { display: none; }
+  .mobile-ui #qComputing > br { display: none; }
+  .mobile-ui .mobile-device > br { display: none; }
+  .mobile-ui .mobile-device > .engineText5 { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .mobile-ui .device-cost { margin: 4px 0; overflow-wrap: anywhere; }
+  .mobile-ui .mobile-device-management { margin: 0 0 12px; border-bottom: 1px solid var(--line); }
+  .mobile-ui .mobile-device-management summary { color: var(--muted); font-size: 16px; }
+  .mobile-ui .mobile-device-management[open] { padding-bottom: 12px; }
+  .mobile-ui #powerDiv { margin: 16px 0; padding-top: 12px; }
+  .mobile-ui #powerDiv > b:first-child { margin-bottom: 8px; }
+  .mobile-ui .power-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; margin-bottom: 12px; }
+  .mobile-ui .power-summary > * { overflow-wrap: anywhere; }
+  .mobile-ui .power-breakdown { grid-column: 1 / -1; order: 4; }
+  .mobile-ui .power-breakdown p { margin-bottom: 8px; }
+  .mobile-ui #farmMultiButtons, .mobile-ui #batteryMultiButtons, .mobile-ui #harvesterMultiButtons, .mobile-ui #wireDroneMultiButtons { margin: 4px 0; }
+  .mobile-ui .power-battery { margin-top: 16px; }
+  .mobile-ui .mobile-tabs { position: fixed; display: flex; inset: auto 0 0; z-index: 5; padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)); background: var(--paper); border-top: 2px solid var(--ink); }
+  .mobile-ui .mobile-tabs button { flex: 1 1 0; min-width: 0; padding: 8px 4px; min-height: 48px; border: 0; border-top: 3px solid transparent; background: transparent; font-size: 16px; }
+  .mobile-ui .mobile-tabs button[aria-selected="true"] { border-top-color: var(--red); background: #e9e8e0; color: var(--ink); }
+  .mobile-ui .mobile-tabs button:focus-visible { outline-offset: -3px; }
+}

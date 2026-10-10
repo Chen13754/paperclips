@@ -31,7 +31,7 @@ function game(storage = new MemoryStorage()) {
         Audio: function () { this.addEventListener = function () {}; },
     });
     context.window = context;
-    for (const file of ['combat-v3.js', 'globals-v3.js', 'projects-v3.js', 'main-v3.js', 'save-files.js']) {
+    for (const file of ['zh.js', 'combat-v3.js', 'globals-v3.js', 'projects-v3.js', 'main-v3.js', 'save-files.js']) {
         vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), context, { filename: file });
     }
     return context;

@@ -903,7 +903,7 @@ project.element.setAttribute("class", "projectButton");
     span.style.fontWeight = "bold";
 project.element.appendChild(span);
     
-    var title = document.createTextNode(project.title);
+    var title = document.createTextNode(localizeBattleName(project.title));
     span.appendChild(title);    
     
     var cost = document.createTextNode(project.priceTag);
@@ -934,19 +934,19 @@ function longBlink(element){
     longBlinkCounter++;    
         
     if (longBlinkCounter > 5 && longBlinkCounter < 10){
-        hypnoDroneTextElement.innerHTML="Release"; 
+        hypnoDroneTextElement.innerHTML="释放";
         }    
     
     if (longBlinkCounter > 30 && longBlinkCounter < 40){
-        hypnoDroneTextElement.innerHTML="<br /><br /><br />Release"; 
+        hypnoDroneTextElement.innerHTML="<br /><br /><br />释放";
         }   
         
     if (longBlinkCounter > 45 && longBlinkCounter < 55){
-        hypnoDroneTextElement.innerHTML="<br />Release";
+        hypnoDroneTextElement.innerHTML="<br />释放";
         }       
         
      if (longBlinkCounter > 55){
-        hypnoDroneTextElement.innerHTML="Release<br/>the<br/>Hypno<br/>Drones";
+        hypnoDroneTextElement.innerHTML="释放<br/>催眠<br/>无人机";
         }       
         
     if (longBlinkCounter >= 120){
@@ -966,7 +966,7 @@ function longBlink(element){
     }
 
 function hypnoDroneEvent(){
-    hypnoDroneTextElement.innerHTML="Release";
+    hypnoDroneTextElement.innerHTML="释放";
     longBlink(hypnoDroneEventDivElement);
 }     
 
@@ -1448,7 +1448,7 @@ function investUpgrade(){
     investUpgradeCost = Math.floor(Math.pow(investLevel+1, Math.E)*100);
     investUpgradeCostElement.innerHTML = formatWithCommas(investUpgradeCost);
     yomiDisplayElement.innerHTML = formatWithCommas(yomi);
-    displayMessage("Investment engine upgraded, expected profit/loss ratio now "+stockGainThreshold);
+    displayMessage("投资引擎已升级，预期盈亏比现为 "+stockGainThreshold);
 }
 
 
@@ -2002,7 +2002,7 @@ function newTourney(){
     btnRunTournamentElement.disabled = false;
     vertStratElement.innerHTML = "&nbsp";
     horizStratElement.innerHTML = "&nbsp";
-    tourneyDisplayElement.innerHTML = "选择策略，运行比赛，获得yomi";
+    tourneyDisplayElement.innerHTML = "选择策略，运行比赛，获得 Yomi";
     
     
 }
@@ -2128,7 +2128,7 @@ function declareWinner(){
         
     if (milestoneFlag < 15){    
        
-       displayMessage(strats[pick].name+" scored "+strats[pick].currentScore+" and beat "+bB+" "+w+". Yomi increased by "+strats[pick].currentScore * yomiBoost * beatBoost);
+       displayMessage(cnItem(strats[pick].name)+" 得分 "+strats[pick].currentScore+"，击败 "+bB+" 个策略。Yomi 增加 "+strats[pick].currentScore * yomiBoost * beatBoost);
            
         }
         
@@ -2136,21 +2136,21 @@ function declareWinner(){
             yomi = yomi + 50000;
             
             if (milestoneFlag < 15){ 
-                displayMessage("选择的策略赢得了比赛(或并列第一)。 +50,000 yomi");
+                displayMessage("选择的策略赢得了比赛(或并列第一)。 +50,000 Yomi");
                 }
             yomiDisplayElement.innerHTML = formatWithCommas(yomi);
             
             } else if (project128.flag == 1 && placeScore == strats[pick].currentScore) {
                 yomi = yomi + 30000;
                 if (milestoneFlag < 15){ 
-                displayMessage("选择的策略完成(或并列)第二名。 +30,000 yomi");
+                displayMessage("选择的策略完成(或并列)第二名。 +30,000 Yomi");
                 }
                 yomiDisplayElement.innerHTML = formatWithCommas(yomi);
                 
             } else if (project128.flag == 1 && showScore == strats[pick].currentScore) {
                 yomi = yomi + 20000;
                 if (milestoneFlag < 15){ 
-                displayMessage("选择的策略完成(或并列)第三名。+ 20000 yomi");
+                displayMessage("选择的策略完成(或并列)第三名。+ 20000 Yomi");
                 }
                 yomiDisplayElement.innerHTML = formatWithCommas(yomi);
         
@@ -2674,7 +2674,7 @@ function updateSwarm(){
         boredomFlag = 1;
         boredomLevel = 0;
             if (boredomMsg == 0) {
-            displayMessage("No matter to harvest. Inactivity has caused the Swarm to become bored");
+            displayMessage("没有可采集的物质，长时间闲置使蜂群感到无聊");
             boredomMsg = 1;
             }  
         
@@ -2695,7 +2695,7 @@ function updateSwarm(){
     if (disorgCounter >= 100) {
         disorgFlag = 1;
         if (disorgMsg == 0) {
-            displayMessage("Imbalance between Harvester and Wire Drone levels has disorganized the Swarm");
+            displayMessage("采集无人机与线材无人机数量失衡，蜂群陷入混乱");
             disorgMsg = 1;
             }    
     }
@@ -2711,7 +2711,7 @@ function updateSwarm(){
         swarmGifts = swarmGifts + nextGift;
         swarmGiftsElement.innerHTML = formatWithCommas(swarmGifts, 0);
         if (milestoneFlag<15){
-            displayMessage("The swarm has generated a gift of "+nextGift+" additional computational capacity");
+            displayMessage("蜂群赠予了 "+nextGift+" 点额外计算容量");
             }
         
 //        THE OLD WAY        
@@ -3375,7 +3375,7 @@ function zeroMatter(){
 function calculateTrust(){
     if (clips>(nextTrust-1)){
         trust = trust +1;
-        displayMessage("Production target met: TRUST INCREASED, additional processor/memory capacity granted");
+        displayMessage("生产目标已达成：信任增加，获得额外处理器／内存容量");
         var fibNext = fib1+fib2;
         nextTrust = fibNext*1000;
         fib1 = fib2;
@@ -3390,8 +3390,8 @@ function addProc(){
         creativitySpeed = Math.log10(processors) * Math.pow(processors,1.1) + processors-1;    
         processorsElement.innerHTML = processors;
         if (creativityOn == 1){
-          displayMessage("处理器增加，每秒钟的操作(或创造力)增加")
-        } else {displayMessage("处理器增加，每秒操作增加")}
+          displayMessage("处理器增加，每秒钟的操作点数(或创造力)增加")
+        } else {displayMessage("处理器增加，每秒操作点数增加")}
     
         if (humanFlag == 0){
             swarmGifts = swarmGifts - 1;
@@ -3402,7 +3402,7 @@ function addProc(){
 function addMem(){
     
     if (trust>0 || swarmGifts>0){
-        displayMessage("内存增加，最大操作增加");
+        displayMessage("内存增加，最大操作点数增加");
         memory=memory+1;
         memoryElement.innerHTML = memory;
         if (humanFlag == 0){
@@ -3458,93 +3458,93 @@ function milestoneCheck(){
     
     if (milestoneFlag == 0 && funds >= 5){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("AutoClippers available for purchase");
+        displayMessage("自动回形针机现已可购买");
     }
     
     if (milestoneFlag == 1 && Math.ceil(clips) >= 500){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("500 回形针被创造用了 " + timeCruncher(ticks));
+        displayMessage("500 回形针已生产，耗时 " + timeCruncher(ticks));
     }
     if (milestoneFlag == 2 && Math.ceil(clips) >= 1000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("1,000 回形针被创造用了 " + timeCruncher(ticks));
+        displayMessage("1,000 回形针已生产，耗时 " + timeCruncher(ticks));
     }
     
     
     if (compFlag == 0 && unsoldClips<1 && funds<wireCost && wire<1){
         compFlag = 1;    
         projectsFlag = 1;
-        displayMessage("Trust-Constrained Self-Modification enabled");
+        displayMessage("受信任约束的自我修改已启用");
     }
     
     if (compFlag == 0 && Math.ceil(clips) >= 2000){    
         compFlag = 1;    
         projectsFlag = 1;
-        displayMessage("Trust-Constrained Self-Modification enabled");
+        displayMessage("受信任约束的自我修改已启用");
     }
         
         
     if (milestoneFlag == 3 && Math.ceil(clips) >= 10000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("10,000 回形针被创造用了 " + timeCruncher(ticks));
+        displayMessage("10,000 回形针已生产，耗时 " + timeCruncher(ticks));
     }
     if (milestoneFlag == 4 && Math.ceil(clips) >= 100000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("100,000 回形针被创造用了 " + timeCruncher(ticks));
+        displayMessage("100,000 回形针已生产，耗时 " + timeCruncher(ticks));
     }
     if (milestoneFlag == 5 && Math.ceil(clips) >= 1000000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("1,000,000 回形针被创造用了 " + timeCruncher(ticks));    
+        displayMessage("1,000,000 回形针已生产，耗时 " + timeCruncher(ticks));
     }   
     
     if (milestoneFlag == 6 && project35.flag == 1){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("Full autonomy attained in " + timeCruncher(ticks));    
+        displayMessage("实现完全自主，耗时 " + timeCruncher(ticks));
     }  
     
     if (milestoneFlag == 7 && Math.ceil(clips) >= 1000000000000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("One Trillion 回形针被创造用了 " + timeCruncher(ticks));    
+        displayMessage("One Trillion 回形针已生产，耗时 " + timeCruncher(ticks));
     } 
     
     if (milestoneFlag == 8 && Math.ceil(clips) >= 1000000000000000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("One Quadrillion 回形针被创造用了 " + timeCruncher(ticks));    
+        displayMessage("One Quadrillion 回形针已生产，耗时 " + timeCruncher(ticks));
     } 
     
     if (milestoneFlag == 9 && Math.ceil(clips) >= 1000000000000000000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("One Quintillion 回形针被创造用了 " + timeCruncher(ticks));    
+        displayMessage("One Quintillion 回形针已生产，耗时 " + timeCruncher(ticks));
     } 
     
     if (milestoneFlag == 10 && Math.ceil(clips) >= 1000000000000000000000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("One Sextillion 回形针被创造用了 " + timeCruncher(ticks));    
+        displayMessage("One Sextillion 回形针已生产，耗时 " + timeCruncher(ticks));
     } 
     
     if (milestoneFlag == 11 && Math.ceil(clips) >= 1000000000000000000000000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("One Septillion 回形针被创造用了 " + timeCruncher(ticks));    
+        displayMessage("One Septillion 回形针已生产，耗时 " + timeCruncher(ticks));
     } 
     
     if (milestoneFlag == 12 && Math.ceil(clips) >= 1000000000000000000000000000){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("One Octillion 回形针被创造用了 " + timeCruncher(ticks));    
+        displayMessage("One Octillion 回形针已生产，耗时 " + timeCruncher(ticks));
     } 
     
     if (milestoneFlag == 13 && spaceFlag == 1){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("Terrestrial resources fully utilized in " + timeCruncher(ticks));    
+        displayMessage("地球资源已全部利用，耗时 " + timeCruncher(ticks));
     }   
     
     if (milestoneFlag == 14 && clips>=totalMatter){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("Universal Paperclips achieved in " + timeCruncher(ticks));    
+        displayMessage("宇宙回形针目标已达成，耗时 " + timeCruncher(ticks));
     }    
     
     if (milestoneFlag == 14 && foundMatter>=totalMatter && availableMatter<1 && wire<1){
         milestoneFlag = milestoneFlag + 1;
-        displayMessage("Universal Paperclips achieved in " + timeCruncher(ticks));    
+        displayMessage("宇宙回形针目标已达成，耗时 " + timeCruncher(ticks));
     }        
     
 }
@@ -3812,7 +3812,7 @@ function increaseProbeTrust(){
     probeTrustCost = Math.floor(Math.pow(probeTrust+1, 1.47)*500);
     probeTrustDisplayElement.innerHTML = probeTrust;
     probeTrustCostDisplayElement.innerHTML = formatWithCommas(Math.floor(probeTrustCost));
-    displayMessage("WARNING: Risk of value drift increased");
+    displayMessage("警告：价值漂移风险增加");
     }    
 }
 
@@ -3824,7 +3824,7 @@ function increaseMaxTrust(){
     // maxTrustCost = Math.floor(Math.pow(maxTrust, 1.17)*1000);
     maxTrustDisplayElement.innerHTML = formatWithCommas(maxTrust);
     // document.getElementById('maxTrustCostDisplay').innerHTML = Math.floor(maxTrustCost).toLocaleString();
-    displayMessage("Maximum trust increased, probe design space expanded");
+    displayMessage("信任上限已提高，探测器设计空间扩大");
     }
 }
 
@@ -4232,7 +4232,7 @@ window.setInterval(function(){
     stockReportCounter++;
     if (stockReportCounter>=10000){
         var r = formatWithCommas(ledger+portTotal);
-        displayMessage("Lifetime investment revenue report: $"+r);
+        displayMessage("累计投资收益报告：$"+r);
         stockReportCounter = 0;
         }
     }
@@ -4528,17 +4528,17 @@ if (dismantle >= 7) {
     }
     
     if (endTimer6>=600 && milestoneFlag == 16) {
-        displayMessage("a game by Frank Lantz");
+        displayMessage("游戏作者：Frank Lantz");
         milestoneFlag++;
     }
     
     if (endTimer6>=700 && milestoneFlag == 17) {
-        displayMessage("combat programming by Bennett Foddy");
+        displayMessage("战斗程序：Bennett Foddy");
         milestoneFlag++;
     }
     
     if (endTimer6>=800 && milestoneFlag == 18) {
-        displayMessage("'Riversong' by Tonto's Expanding Headband used by kind permission of Malcolm Cecil");
+        displayMessage("配乐：Tonto's Expanding Headband 的《Riversong》，经 Malcolm Cecil 许可使用");
         milestoneFlag++;
     }
     
@@ -5852,7 +5852,7 @@ function load() {
         probeCost = loadGame.probeCost;
     
         project40b.priceTag = "($" + formatWithCommas(bribe)+")";
-    project51.priceTag =  "(" + qChipCost + " ops)";
+    project51.priceTag =  "(" + qChipCost + " 操作点数)";
     
     for(var i=0; i < projects.length; i++){
     
@@ -6177,7 +6177,7 @@ function load1() {
         probeCost = loadGame.probeCost;
     
         project40b.priceTag = "($" + formatWithCommas(bribe)+")";
-    project51.priceTag =  "(" + qChipCost + " ops)";
+    project51.priceTag =  "(" + qChipCost + " 操作点数)";
     
     refresh();
     
@@ -6482,7 +6482,7 @@ function load2() {
         probeCost = loadGame.probeCost;
     
         project40b.priceTag = "($" + formatWithCommas(bribe)+")";
-    project51.priceTag =  "(" + qChipCost + " ops)";
+    project51.priceTag =  "(" + qChipCost + " 操作点数)";
     
     
     refresh();

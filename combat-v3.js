@@ -788,7 +788,7 @@ function createBattle(){
         battleName = generateBattleName();
         }
     
-    document.getElementById('battleName').innerHTML = battleName;
+    document.getElementById('battleName').textContent = localizeBattleName(battleName);
     
     battles.push(newBattle);
     
