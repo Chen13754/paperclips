@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test tests/save-files.test.cjs tests/quantum.test.cjs tests/localization.test.cjs",
+    "test": "node --test tests/save-files.test.cjs tests/quantum.test.cjs tests/localization.test.cjs tests/settings.test.cjs",
     "test:browser": "node tests/browser.cjs",
-    "test:design": "node tests/design.cjs"
+    "test:design": "node tests/design.cjs",
+    "test:settings": "node tests/settings-browser.cjs"
   },
   "devDependencies": {
     "playwright-core": "^1.64.0"

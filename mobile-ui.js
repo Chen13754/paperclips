@@ -307,6 +307,7 @@
     function update() {
         if (media.matches && !dispose) dispose = mount();
         else if (!media.matches && dispose) { dispose(); dispose = null; }
+        document.dispatchEvent(new Event("paperclips:layout"));
     }
     media.addEventListener('change', update);
     update();

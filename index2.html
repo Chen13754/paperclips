@@ -3,25 +3,17 @@
     <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="interface-v2.css?v=mobile-console-1" />
-        <!-- Global Site Tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107491380-1"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments)};
-            gtag('js', new Date());
-            gtag('config', 'UA-107491380-1');
-            gtag('set', {'user_id': 'USER_ID'}); // Set the user ID using signed-in user_id.
-        </script>
+        <link rel="stylesheet" type="text/css" href="interface-v2.css?v=settings-1" />
 <title>回形针 - Paperclips</title>
     </head>
     
     <body>
 <header class="site-header">
 <div class="brand"><h1>环球回形针</h1><p>UNIVERSAL PAPERCLIPS</p></div>
-<nav id="saveToolbar" aria-label="文件存档">
+<nav id="saveToolbar" aria-label="存档与设置">
         <button type="button" class="button2" id="exportSave">导出存档</button>
         <button type="button" class="button2" id="importSave">导入存档</button>
+        <button type="button" class="button2" id="openSettings" aria-haspopup="dialog">设置</button>
         <input type="file" id="saveFile" accept=".json,application/json" hidden>
         <a href="migrate.html">原网页进度迁移</a>
         <span id="saveStatus" role="status" aria-live="polite"></span>
@@ -876,31 +868,35 @@
 </div>
 </div>
 </main>
+<dialog id="settingsDialog" aria-labelledby="settingsTitle">
+  <div class="settings-header"><h2 id="settingsTitle">设置</h2><button type="button" id="closeSettings">关闭</button></div>
+  <section id="settingsOverview">
+    <dl id="gameSummary"></dl>
+    <p class="settings-note">运行时间按本周目的游戏计时计算，不含离线时间。</p>
+    <label class="settings-toggle"><input type="checkbox" id="showNumberHints" checked>显示数值说明（问号）</label>
+    <p class="settings-note">此开关仅在本次页面打开期间生效。</p>
+    <button type="button" id="openResourceBoosts">资源增益 →</button>
+  </section>
+  <section id="resourceBoosts" hidden aria-labelledby="boostTitle">
+    <button type="button" id="backToSettings">← 返回设置</button>
+    <h3 id="boostTitle" tabindex="-1">资源增益</h3>
+    <p class="settings-note" id="boostNotice"></p>
+    <div id="boostList"></div>
+    <p id="boostStatus" role="status" aria-live="polite"></p>
+  </section>
+</dialog>
+<div id="numberHint" popover="manual" role="note">
+  <p id="numberHintText" aria-live="polite"></p><button type="button" id="closeNumberHint" aria-label="关闭数值说明">关闭</button>
+</div>
 <footer class="site-footer"><span>游戏作者： <strong>Frank Lantz</strong></span>
 <span><a href="https://www.decisionproblem.com/paperclips/">原作</a> / <a href="https://github.com/g1tyx/paperclips">中文版来源</a></span></footer>
-<script src="zh.js?v=mobile-console-1"></script>
-        <script type="text/javascript" src="combat-v3.js?v=mobile-console-1"></script>
+<script src="zh.js?v=settings-1"></script>
+        <script type="text/javascript" src="combat-v3.js?v=settings-1"></script>
         <script type="text/javascript" src="globals-v3.js"></script>      
-        <script type="text/javascript" src="projects-v3.js?v=mobile-console-1"></script>
-<script type="text/javascript" src="main-v3.js?v=mobile-console-1"></script>
-<script src="save-files.js"></script>
-<script src="mobile-ui.js?v=mobile-console-1"></script>
-<!--客服 开始-->
-<script src="//g8hh.com/static/js/jquery.min.js"></script>
-<link rel="stylesheet" href="//g8hh.com/static/css/kf.css" type="text/css" media="screen" charset="utf-8">
-<script src="//g8hh.com/static/js/kf.js"></script>
-<!-- 客服 结束 -->
-<!--站长统计--> 
-<div style="display: none">
-    <script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?028b1b5f659ed138230f4cafd7ad0dfc";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-    </div>
+        <script type="text/javascript" src="projects-v3.js?v=settings-1"></script>
+<script type="text/javascript" src="main-v3.js?v=settings-1"></script>
+<script src="save-files.js?v=settings-1"></script>
+<script src="mobile-ui.js?v=settings-1"></script>
+<script src="settings.js?v=settings-1"></script>
     </body>
 </html>

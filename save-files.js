@@ -76,6 +76,9 @@
             // Upstream stores these titles as either text or serialized DOM Text nodes.
             if (field === "battleName" || field === "threnodyTitle") {
                 valid = typeof actual === "string" || (record(actual) && Object.keys(actual).length === 0);
+            } else if (field === "creativityOn") {
+                // Native research writes booleans; legacy helpers also write numeric 0/1.
+                valid = typeof actual === "boolean" || actual === 0 || actual === 1;
             } else if (field === "pick") {
                 // <select>.value changes this field from a number to a numeric string.
                 valid = (typeof actual === "number" || typeof actual === "string") &&

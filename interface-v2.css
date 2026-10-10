@@ -269,3 +269,56 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 310 / 150; bac
   .mobile-ui #mobile-tab-projects[aria-selected="true"] { border-top-color: var(--yellow); }
   .mobile-ui .mobile-tabs button:focus-visible { outline-offset: -3px; }
 }
+
+/* Native panning and pinch zoom remain available; rapid taps do not trigger zoom. */
+html, body, button, a, select, input, summary { touch-action: manipulation; }
+#saveToolbar { grid-template-columns: repeat(3, auto); }
+#saveToolbar #openSettings { min-width: 64px; }
+#settingsDialog {
+  width: min(560px, calc(100% - 24px)); max-height: calc(100dvh - 24px);
+  padding: 24px; border: 2px solid var(--ink); color: var(--ink);
+  background: var(--paper); overflow-y: auto; overscroll-behavior: contain;
+}
+#settingsDialog::backdrop { background: rgb(0 0 0 / .55); }
+.settings-header { position: sticky; top: -24px; z-index: 2; background: var(--paper); padding-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 20px; }
+.settings-header h2 { font-size: 26px; margin: 0; }
+.settings-note { color: var(--muted); font-size: 16px; line-height: 1.6; margin: 10px 0 16px; }
+#gameSummary { margin: 0; }
+#gameSummary dt { color: var(--muted); font-size: 16px; }
+#gameSummary dd { font-weight: 600; margin: 0 0 12px; overflow-wrap: anywhere; }
+.settings-toggle { display: flex; gap: 12px; align-items: center; min-height: 44px; cursor: pointer; }
+.settings-toggle input { width: 24px; height: 24px; accent-color: var(--blue); }
+#openResourceBoosts { width: 100%; border-color: var(--blue); color: var(--blue); }
+#boostTitle { font-size: 22px; margin: 20px 0 10px; }
+.boost-row { padding: 16px 0; border-top: 1px solid var(--line); }
+.boost-row h4 { margin: 0; font-size: 18px; }
+.boost-value { margin: 4px 0 10px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.boost-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.boost-actions button { flex: 1 1 auto; }
+#boostStatus { position: sticky; bottom: -24px; padding: 12px 0; margin: 0; background: var(--paper); color: var(--blue); font-size: 16px; }
+#boostStatus:empty { display: none; }
+.number-help {
+  position: relative; width: 44px; min-width: 44px; height: 44px; min-height: 44px;
+  padding: 0; margin: -8px 0; border: 0; color: var(--blue);
+  font-size: 16px; line-height: 44px; font-weight: 700; vertical-align: middle;
+}
+.number-help:hover:enabled { background: transparent; }
+.number-help::before { content: ""; position: absolute; width: 22px; height: 22px; border: 1px solid currentColor; border-radius: 50%; left: 11px; top: 11px; }
+.mobile-metric { position: relative; }
+.mobile-ui .mobile-metric .metric-label { padding-right: 30px; }
+.metric-help { position: absolute; top: 0; right: 0; margin: 0; }
+#numberHint {
+  position: fixed; inset: auto; width: 360px; max-width: calc(100vw - 24px);
+  margin: 0; padding: 16px; border: 2px solid var(--blue); color: var(--ink);
+  background: var(--paper); box-shadow: 0 8px 28px rgb(0 0 0 / .15);
+  font-size: 16px; line-height: 1.65; overflow-wrap: anywhere;
+}
+#numberHint p { margin: 0 0 8px; }
+#numberHint button { display: block; margin-left: auto; }
+@media (max-width: 699px) {
+  .mobile-ui #saveToolbar { grid-template-columns: repeat(3, auto); }
+  .mobile-ui #saveToolbar #openSettings { min-width: 48px; }
+  #settingsDialog { padding: 16px; }
+  .settings-header { top: -16px; }
+  #boostStatus { bottom: -16px; }
+}

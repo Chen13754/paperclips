@@ -77,7 +77,8 @@ async function selectFile(page, file, accept) {
 
         async function context(options = {}, migration = false) {
             const ctx = await browser.newContext({ acceptDownloads: true, ...options });
-            // Game behavior is independent of the upstream analytics/customer-service scripts.
+            // Legacy-source migration fixtures still contain upstream scripts; isolate those requests here.
+            // settings-browser.cjs separately verifies the current game without interception.
             await ctx.route('**/*', route => {
                 const url = new URL(route.request().url());
                 if (migration && !process.env.PAPERCLIPS_URL && url.origin === 'https://chen13754.github.io' &&
