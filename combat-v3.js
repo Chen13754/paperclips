@@ -291,6 +291,7 @@ function Battle(){
 	}
 
 	var Update = function(){
+        if (window.PaperclipSaves && PaperclipSaves.paused()) return;
 		
         ClearFrame();
         UpdateGrid();

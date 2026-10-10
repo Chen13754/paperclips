@@ -39,6 +39,7 @@
     }
     function failure(message) { return { ok: false, message }; }
     function apply(key, amount) {
+        if (game.PaperclipSaves.paused()) return failure('存档恢复或重开期间，资源增益不可用。');
         if (game.dismantle >= 1) return failure('结局拆卸期间，资源增益不可用。');
         // Look up the current phase and unlocks again, including clicks from an already-open dialog.
         const definition = definitions.find(item => item.key === key && available(item));

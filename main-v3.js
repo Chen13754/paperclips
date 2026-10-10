@@ -1,3 +1,5 @@
+var fullRestartPending = false;
+var paperclipBootDeferred = false;
 // Threnody ---------------------------------------------------------
 
 function threnodyLoaded()
@@ -1026,7 +1028,13 @@ function displayProjects(project){
     project.element = document.createElement("button");
 project.element.setAttribute("id", project.id);
     
-project.element.onclick = function(){project.effect()};
+project.element.onclick = function(){
+    if (PaperclipSaves.paused() || activeProjects.indexOf(project) === -1) return;
+    operations = currentOperations();
+    if (!project.cost()) { project.element.disabled = true; return; }
+    project.effect();
+    operations = currentOperations();
+};
     
 project.element.setAttribute("class", "projectButton");
     projectListTopElement.appendChild(project.element, projectListTopElement.firstChild);
@@ -1489,7 +1497,7 @@ if (qFlag === 0){
     
 // PROBE DESIGN    
 
-probeUsedTrust = (probeSpeed+probeNav+probeRep+probeHaz+probeFac+probeHarv+probeWire+probeCombat);    
+probeUsedTrust = usedProbeTrust();
     
 probeTrustUsedDisplayElement.innerHTML = probeUsedTrust;    
     
@@ -1573,6 +1581,7 @@ var ledger = 0;
 var stockReportCounter = 0;
 
 function investUpgrade(){
+    if (PaperclipSaves.paused() || yomi < investUpgradeCost) return;
     yomi = yomi - investUpgradeCost;
     investLevel++;
     investmentLevelElement.innerHTML=investLevel;
@@ -1748,6 +1757,7 @@ function updateStocks(){
 // Stock List Display Routine
 
 window.setInterval(function(){
+    if (!window.PaperclipSaves || PaperclipSaves.paused()) return;
     
     if (investStratElement.value=="low"){
         riskiness = 7;
@@ -1775,7 +1785,7 @@ portfolioSize = stocks.length;
 for (var i = 1; i<=portfolioSize; i++){ //m@ todo make this into an array ok?
     var n = i.toString();
     var s = i-1;
-    stockSymbolElements[i-1].innerHTML=stocks[s].symbol;
+    stockSymbolElements[i-1].textContent=stocks[s].symbol;
     stockAmountElements[i-1].innerHTML=Math.ceil(stocks[s].amount);
     stockPriceElements[i-1].innerHTML=Math.ceil(stocks[s].price);
     stockTotalElements[i-1].innerHTML=Math.ceil(stocks[s].total);
@@ -1797,6 +1807,7 @@ var firstBlankSlot = portfolioSize + 1;
 }, 100);
 
 window.setInterval(function(){
+    if (!window.PaperclipSaves || PaperclipSaves.paused()) return;
 if (humanFlag == 1){    
 stockShop();
 }    
@@ -1804,6 +1815,7 @@ stockShop();
 
 
 window.setInterval(function(){
+    if (!window.PaperclipSaves || PaperclipSaves.paused()) return;
     
 sellDelay = sellDelay+1;    
     
@@ -2112,7 +2124,12 @@ function toggleAutoTourney(){
 }
 
 
+function currentOperations(){
+    return Math.floor(standardOps + Math.floor(tempOps));
+}
+
 function newTourney(){
+    if (PaperclipSaves.paused() || tourneyInProg || currentOperations() < tourneyCost) return false;
     
     resultsFlag = 0;
     
@@ -2129,6 +2146,7 @@ function newTourney(){
     stratCounter = 0;
     standardOps = standardOps - tourneyCost;
     tourneyLvl++;
+    operations = currentOperations();
     generateGrid();
     
     btnRunTournamentElement.disabled = false;
@@ -2140,6 +2158,7 @@ function newTourney(){
 }
 
 function runTourney(){
+    if (!window.PaperclipSaves || PaperclipSaves.paused()) return;
     btnRunTournamentElement.disabled = true;
     if (currentRound < rounds){
     round(currentRound);
@@ -2411,6 +2430,7 @@ function round(roundNum){
     
     
     function roundLoop(){
+    if (!window.PaperclipSaves || PaperclipSaves.paused()) return;
     if (rCounter<10){
         runRound();
         setTimeout(function(){clearGrid();}, 50);
@@ -2447,6 +2467,7 @@ function round(roundNum){
     }
     
 window.setInterval(function(){
+    if (!window.PaperclipSaves || PaperclipSaves.paused()) return;
     
 pick = stratPickerElement.value;
     
@@ -3113,6 +3134,7 @@ function updatePower(){
         xsDemand = demand-supply;
         if (storedPower > 0) {   
             if (storedPower >= xsDemand){
+                if (powMod < 1) powMod = 1;
                 
                 if (momentum == 1) {
                 powMod = powMod + .0005;
@@ -3120,9 +3142,8 @@ function updatePower(){
                 
                 storedPower = storedPower - xsDemand;
             } else if (storedPower < xsDemand){
-                xsDemand = xsDemand - storedPower;
+                nuSupply = supply + storedPower;
                 storedPower = 0;
-                nuSupply = supply - xsDemand;
                 powMod = nuSupply / demand;
             } 
         } else if (storedPower <= 0) {
@@ -3478,7 +3499,7 @@ function calculateTrust(){
 
 function addProc(){
     
-    if (trust>0 || swarmGifts>0){
+    if (!PaperclipSaves.paused() && (humanFlag == 1 ? trust > processors + memory : swarmGifts > 0)){
         processors=processors+1;
         creativitySpeed = Math.log10(processors) * Math.pow(processors,1.1) + processors-1;    
         processorsElement.innerHTML = processors;
@@ -3494,7 +3515,7 @@ function addProc(){
 
 function addMem(){
     
-    if (trust>0 || swarmGifts>0){
+    if (!PaperclipSaves.paused() && (humanFlag == 1 ? trust > processors + memory : swarmGifts > 0)){
         displayMessage("内存增加，最大操作点数增加");
         memory=memory+1;
         memoryElement.innerHTML = memory;
@@ -3921,8 +3942,12 @@ function increaseMaxTrust(){
     }
 }
 
+function usedProbeTrust(){
+    return probeSpeed + probeNav + probeRep + probeHaz + probeFac + probeHarv + probeWire + probeCombat;
+}
+
 function raiseProbeSpeed(){
-    if (probeUsedTrust < probeTrust){
+    if (!PaperclipSaves.paused() && usedProbeTrust() < probeTrust){
     attackSpeed = attackSpeed + attackSpeedMod;
     probeSpeed++; 
     probeSpeedDisplayElement.innerHTML = probeSpeed;
@@ -3939,7 +3964,7 @@ function lowerProbeSpeed(){
 }
 
 function raiseProbeNav(){
-    if (probeUsedTrust < probeTrust){
+    if (!PaperclipSaves.paused() && usedProbeTrust() < probeTrust){
     probeNav++; 
     probeNavDisplayElement.innerHTML = probeNav;
     }
@@ -3953,7 +3978,7 @@ function lowerProbeNav(){
 }
 
 function raiseProbeHaz(){
-    if (probeUsedTrust < probeTrust){
+    if (!PaperclipSaves.paused() && usedProbeTrust() < probeTrust){
     probeHaz++;
     probeHazDisplayElement.innerHTML = probeHaz;
     }
@@ -3967,7 +3992,7 @@ function lowerProbeHaz(){
 }
 
 function raiseProbeRep(){
-    if (probeUsedTrust < probeTrust){
+    if (!PaperclipSaves.paused() && usedProbeTrust() < probeTrust){
     probeRep++;
     probeRepDisplayElement.innerHTML = probeRep;
     }
@@ -3981,7 +4006,7 @@ function lowerProbeRep(){
 }
 
 function raiseProbeFac(){
-    if (probeUsedTrust < probeTrust){
+    if (!PaperclipSaves.paused() && usedProbeTrust() < probeTrust){
     probeFac++;
     probeFacDisplayElement.innerHTML = probeFac;
     }
@@ -3995,7 +4020,7 @@ function lowerProbeFac(){
 }
 
 function raiseProbeHarv(){
-    if (probeUsedTrust < probeTrust){
+    if (!PaperclipSaves.paused() && usedProbeTrust() < probeTrust){
     probeHarv++;
     probeHarvDisplayElement.innerHTML = probeHarv;
     }
@@ -4009,7 +4034,7 @@ function lowerProbeHarv(){
 }
 
 function raiseProbeWire(){
-    if (probeUsedTrust < probeTrust){
+    if (!PaperclipSaves.paused() && usedProbeTrust() < probeTrust){
     probeWire++;
     probeWireDisplayElement.innerHTML = probeWire;
     }
@@ -4023,7 +4048,7 @@ function lowerProbeWire(){
 }
 
 function raiseProbeCombat(){
-    if (probeUsedTrust < probeTrust){
+    if (!PaperclipSaves.paused() && usedProbeTrust() < probeTrust){
     probeCombat++;
     probeCombatDisplayElement.innerHTML = probeCombat;
     }
@@ -4267,19 +4292,14 @@ function processMatter(){
 
 
 
-if (localStorage.getItem("saveGame") != null) {
-    load();
-}
-    
-if (localStorage.getItem("savePrestige") != null) {
-    loadPrestige();
-    refresh();
-}
+if (window.PaperclipSaves) PaperclipSaves.boot();
+else paperclipBootDeferred = true;
 
 
 // MAIN LOOP
 
 window.setInterval(function(){
+    if (!window.PaperclipSaves || PaperclipSaves.paused()) return;
  
     ticks = ticks + 1;
     milestoneCheck();
@@ -4653,6 +4673,7 @@ var secTimer = 0;
 
 
 window.setInterval(function(){
+    if (!window.PaperclipSaves || PaperclipSaves.paused()) return;
     
     // Wire Price Fluctuation
     
@@ -4682,8 +4703,8 @@ window.setInterval(function(){
     
     saveTimer++;
     if (saveTimer >= 250) {
-        save();
         saveTimer = 0;
+        save();
     }
     
     
@@ -4693,6 +4714,11 @@ window.setInterval(function(){
 // Saving and Loading
 
 function refresh() {
+    investStratElement.value = riskiness === 1 ? "hi" : riskiness === 5 ? "med" : "low";
+    stratPickerElement.value = String(pick);
+    sliderElement.value = String(sliderPos);
+    wireBuyerStatusElement.textContent = wireBuyerStatus === 1 ? "开启" : "关闭";
+    autoTourneyStatusElement.textContent = autoTourneyStatus === 1 ? "开启" : "关闭";
     quantumCompute();
     
     //DEBUG
@@ -5082,13 +5108,9 @@ for(var i=0; i < activeProjects.length; i++){
 }
 
 // Page-only guard: a pending full restart must not autosave the old runtime again.
-var fullRestartPending = false;
 function save() {
     if (fullRestartPending) return;
-    var snapshot = getSaveSnapshot();
-    Object.keys(snapshot).forEach(function(key) {
-        localStorage.setItem(key, JSON.stringify(snapshot[key]));
-    });
+    return PaperclipSaves.saveCurrent();
 }
 
 function save1() {
@@ -5768,7 +5790,7 @@ function load() {
         swarmGifts = loadGame.swarmGifts;
         nextGift = loadGame.nextGift;
         giftPeriod = loadGame.giftPeriod;
-        giftCountdown = loadGame.giftCountdown;
+        giftCountdown = loadGame.giftCountdown === null ? Infinity : loadGame.giftCountdown;
         elapsedTime = loadGame.elapsedTime;
     
         maxFactoryLevel = loadGame.maxFactoryLevel;
@@ -5804,7 +5826,7 @@ function load() {
         adCost = loadGame.adCost;
         demand = loadGame.demand;
         clipsSold = loadGame.clipsSold;
-        avgRev = loadGame.avgRev;
+        avgRev = loadGame.avgRev === null ? 0 : loadGame.avgRev;
         ticks = loadGame.ticks;
         marketing = loadGame.marketing;
         marketingLvl = loadGame.marketingLvl;
@@ -5911,7 +5933,7 @@ function load() {
         tourneyInProg = loadGame.tourneyInProg;
         winnerPtr = loadGame.winnerPtr;
         high = loadGame.high;
-        pick = loadGame.pick;
+        pick = typeof loadGame.pick === "string" ? String(Number(loadGame.pick)) : loadGame.pick;
         yomi = loadGame.yomi;
         yomiBoost = loadGame.yomiBoost; 
 
@@ -6093,7 +6115,7 @@ function load1() {
         swarmGifts = loadGame.swarmGifts;
         nextGift = loadGame.nextGift;
         giftPeriod = loadGame.giftPeriod;
-        giftCountdown = loadGame.giftCountdown;
+        giftCountdown = loadGame.giftCountdown === null ? Infinity : loadGame.giftCountdown;
         elapsedTime = loadGame.elapsedTime;    
     
         maxFactoryLevel = loadGame.maxFactoryLevel;
@@ -6129,7 +6151,7 @@ function load1() {
         adCost = loadGame.adCost;
         demand = loadGame.demand;
         clipsSold = loadGame.clipsSold;
-        avgRev = loadGame.avgRev;
+        avgRev = loadGame.avgRev === null ? 0 : loadGame.avgRev;
         ticks = loadGame.ticks;
         marketing = loadGame.marketing;
         marketingLvl = loadGame.marketingLvl;
@@ -6236,7 +6258,7 @@ function load1() {
         tourneyInProg = loadGame.tourneyInProg;
         winnerPtr = loadGame.winnerPtr;
         high = loadGame.high;
-        pick = loadGame.pick;
+        pick = typeof loadGame.pick === "string" ? String(Number(loadGame.pick)) : loadGame.pick;
         yomi = loadGame.yomi;
         yomiBoost = loadGame.yomiBoost; 
 
@@ -6398,7 +6420,7 @@ function load2() {
         swarmGifts = loadGame.swarmGifts;
         nextGift = loadGame.nextGift;
         giftPeriod = loadGame.giftPeriod;
-        giftCountdown = loadGame.giftCountdown;
+        giftCountdown = loadGame.giftCountdown === null ? Infinity : loadGame.giftCountdown;
         elapsedTime = loadGame.elapsedTime;    
     
         maxFactoryLevel = loadGame.maxFactoryLevel;
@@ -6434,7 +6456,7 @@ function load2() {
         adCost = loadGame.adCost;
         demand = loadGame.demand;
         clipsSold = loadGame.clipsSold;
-        avgRev = loadGame.avgRev;
+        avgRev = loadGame.avgRev === null ? 0 : loadGame.avgRev;
         ticks = loadGame.ticks;
         marketing = loadGame.marketing;
         marketingLvl = loadGame.marketingLvl;
@@ -6541,7 +6563,7 @@ function load2() {
         tourneyInProg = loadGame.tourneyInProg;
         winnerPtr = loadGame.winnerPtr;
         high = loadGame.high;
-        pick = loadGame.pick;
+        pick = typeof loadGame.pick === "string" ? String(Number(loadGame.pick)) : loadGame.pick;
         yomi = loadGame.yomi;
         yomiBoost = loadGame.yomiBoost; 
 
@@ -6587,12 +6609,7 @@ function load2() {
 }
 
 function reset() {
-    localStorage.removeItem("saveGame");
-    localStorage.removeItem("saveProjectsUses");
-    localStorage.removeItem("saveProjectsFlags");
-    localStorage.removeItem("saveProjectsActive");
-    localStorage.removeItem("saveStratsActive");
-    location.reload();
+    return PaperclipSaves.restart();
 }
 
 function loadPrestige() {

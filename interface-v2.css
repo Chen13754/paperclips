@@ -48,6 +48,12 @@ hr.short { width: 100%; }
 #saveToolbar a { grid-column: 1 / -1; justify-self: end; font-size: 13px; color: var(--muted); }
 #saveStatus { grid-column: 1 / -1; max-width: 440px; font-size: 14px; overflow-wrap: anywhere; }
 #saveStatus:empty { display: none; }
+#storageRecovery { max-width: 760px; border: 2px solid var(--red); padding: 24px; line-height: 1.7; }
+#storageRecovery h2 { margin-top: 0; }
+#storageRecovery button { min-height: 44px; margin: 4px 8px 4px 0; }
+.save-recovery .overview, .save-recovery #gameGrid, .save-recovery #hypnoDroneEventDiv,
+.save-recovery #exportSave, .save-recovery #gameSummary, .save-recovery #openManual,
+.save-recovery #openResourceBoosts { display: none; }
 #cover { position: fixed; inset: 0; z-index: 10; background: var(--paper); }
 .overview { align-items: start; display: grid; grid-template-columns: 1.25fr 1fr; gap: 32px; padding: 12px 0 32px; }
 #topDiv { display: flex; flex-direction: column; justify-content: flex-start; min-width: 0; }

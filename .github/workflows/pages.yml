@@ -44,6 +44,7 @@ jobs:
           EOF
           fc-match ':lang=zh-cn'
       - run: npm run test:manual
+      - run: npm run test:audit
       - run: npm run test:browser
       - run: npm run test:design
       - run: npm run test:settings

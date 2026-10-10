@@ -312,6 +312,7 @@
         };
     }
     function update() {
+        if (window.PaperclipSaves.paused()) return;
         if (media.matches && !dispose) dispose = mount();
         else if (!media.matches && dispose) { dispose(); dispose = null; }
         document.dispatchEvent(new Event("paperclips:layout"));

@@ -1176,7 +1176,7 @@ var project51 = {
     description: "将电磁波转换成量子运算 ",
     trigger: function(){return project50.flag == 1},
     uses: 1,
-    cost: function(){return operations>=qChipCost},
+    cost: function(){return operations>=qChipCost && nextQchip<qChips.length},
     flag: 0,
     element: null,
     effect: function(){
@@ -2140,16 +2140,11 @@ var project200 = {
     flag: 0,
     element: null,
     effect: function(){
+        if (!PaperclipSaves.restart({ prestigeU: prestigeU + 1,
+            prestigeS: prestigeS + 0 })) return;
         project200.flag = 1;
-        standardOps = standardOps-300000;
+        standardOps -= 300000;
         prestigeU++;
-        var savePrestige = {
-            prestigeU: prestigeU,
-            prestigeS: prestigeS,
-            }
-        localStorage.setItem("savePrestige",JSON.stringify(savePrestige));
-        displayMessage("正在进入新的宇宙。");
-        reset();
         
     }
 }
@@ -2168,16 +2163,11 @@ var project201 = {
     flag: 0,
     element: null,
     effect: function(){
+        if (!PaperclipSaves.restart({ prestigeU: prestigeU + 0,
+            prestigeS: prestigeS + 1 })) return;
         project201.flag = 1;
-        creativity = creativity-300000;
+        creativity -= 300000;
         prestigeS++;
-        var savePrestige = {
-            prestigeU: prestigeU,
-            prestigeS: prestigeS,
-            }
-        localStorage.setItem("savePrestige",JSON.stringify(savePrestige));
-        displayMessage("正在进入模拟宇宙。");
-        reset();
         
     }
 }
@@ -2388,13 +2378,13 @@ var project217 = {
     element: null,
     effect: function(){
         if (confirm("您确定要重玩游戏吗?") == true) {
+        if (!reset()) return;
         standardOps = standardOps+10000;
         project217.flag = 1;
         displayMessage("重新开始");
         project217.element.parentNode.removeChild(project217.element);
         var index = activeProjects.indexOf(project217);
         activeProjects.splice(index, 1);
-        reset();
         }
     }
 }

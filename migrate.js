@@ -26,7 +26,7 @@
             return;
         }
         var script = document.createElement("script");
-        script.src = "https://chen13754.github.io/paperclips/save-files.js?migration=2";
+        script.src = "https://chen13754.github.io/paperclips/save-files.js?migration=3";
         var timeout = setTimeout(function () {
             status.textContent = "导出工具仍未加载。请检查网络，关闭面板后重试。";
         }, 15000);

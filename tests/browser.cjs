@@ -222,7 +222,7 @@ async function selectFile(page, file, accept) {
         const beforeFailure = await stored(legacy);
         assert(await legacy.evaluate(() => delete window.PaperclipSaves));
         await migrationContext.route('**/save-files.js?migration=load-failure-test', route => route.abort());
-        await legacy.evaluate(code.slice('javascript:'.length).replace('migration=2', 'migration=load-failure-test'));
+        await legacy.evaluate(code.slice('javascript:'.length).replace(/migration=\d+/, 'migration=load-failure-test'));
         try {
             await panel.getByRole('status').filter({ hasText: '导出工具加载失败' }).waitFor();
         } catch (error) {

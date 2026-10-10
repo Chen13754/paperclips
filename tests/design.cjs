@@ -31,7 +31,7 @@ const server = http.createServer((req, res) => {
 const keys = ['saveGame', 'saveProjectsUses', 'saveProjectsFlags', 'saveProjectsActive', 'saveStratsActive', 'savePrestige'];
 const stored = page => page.evaluate(keys => Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)])), keys);
 async function ready(page) {
-    await page.waitForFunction(() => window.PaperclipSaves);
+    await page.waitForFunction(() => window.PaperclipSaves && typeof window.buttonUpdate === 'function' && document.readyState !== 'loading');
     await page.evaluate(() => { buttonUpdate(); updateStats(); manageProjects(); buttonUpdate(); });
     await page.evaluate(() => new Promise(requestAnimationFrame));
 }
