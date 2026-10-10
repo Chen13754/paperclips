@@ -13,12 +13,14 @@ class MemoryStorage {
     entries() { return Object.fromEntries(this.data); }
 }
 
-function game(storage = new MemoryStorage()) {
+function game(storage = new MemoryStorage(), environment = {}) {
     const elements = new Map();
     function element(id) {
         if (id === 'exportSave') return null;
         if (!elements.has(id)) elements.set(id, {
             style: {}, value: '10', innerHTML: '', options: [],
+            get textContent() { return this.innerHTML; },
+            set textContent(value) { this.innerHTML = value; },
             appendChild() {}, removeChild() {}, addEventListener() {}, setAttribute() {}, insertBefore() {},
             getContext() { return {}; },
         });
@@ -29,6 +31,7 @@ function game(storage = new MemoryStorage()) {
         document: { getElementById: element, createElement: element, createTextNode: text => ({ textContent: text }) },
         cnItem: value => String(value), location: { reload() {} }, alert() {},
         Audio: function () { this.addEventListener = function () {}; },
+        ...environment,
     });
     context.window = context;
     for (const file of ['zh.js', 'combat-v3.js', 'globals-v3.js', 'projects-v3.js', 'main-v3.js', 'save-files.js']) {

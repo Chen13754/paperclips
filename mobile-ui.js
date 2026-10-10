@@ -217,7 +217,14 @@
         const stock = metric('mobileStock', '可用回形针', 'metric-stock');
         const ops = metric('mobileOps', '操作点数 / 上限', 'metric-secondary');
         const yomi = metric('mobileYomi', 'Yomi', 'metric-secondary');
-        const resize = new ResizeObserver(() => document.body.style.setProperty('--mobile-metrics-height', metrics.offsetHeight + 'px'));
+        let metricsHeight = -1;
+        const resize = new ResizeObserver(() => {
+            const height = metrics.offsetHeight;
+            if (height !== metricsHeight) {
+                metricsHeight = height;
+                document.body.style.setProperty('--mobile-metrics-height', height + 'px');
+            }
+        });
         resize.observe(metrics);
         function activate(key, scroll = true, target = null) {
             if (scroll && key !== active) positions[active] = window.scrollY;

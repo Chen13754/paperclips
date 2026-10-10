@@ -690,6 +690,138 @@ var tourneyResultsElements = [];
 
 cacheDOMElements();
 
+// Only the cumulative display is paced; production and saving keep their native timing.
+var clipCounterDisplay = (function () {
+    var frame = null, timer = null, layoutFrame = null;
+    var lastTime = -Infinity, lastClips, lastMilestone, lastDismantle, lastFinal;
+    var width = 0, height = 0, resetHeight = true;
+    var viewportWidth = typeof window.innerWidth === "number" ? window.innerWidth : 0;
+    function now() { return window.performance ? window.performance.now() : Date.now(); }
+    function write(node, text) {
+        if (text === null || node.textContent === text) return false;
+        if (node.firstChild && node.childNodes.length === 1 && node.firstChild.nodeType === 3) {
+            node.firstChild.data = text;
+        } else {
+            node.textContent = text;
+        }
+        return true;
+    }
+    function stabilize() {
+        if (!clipsElement.getBoundingClientRect) return;
+        if (window.innerWidth < 700) {
+            clipsElement.style.removeProperty("min-height");
+            width = height = 0; resetHeight = false;
+            return;
+        }
+        var rect = clipsElement.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        if (resetHeight || Math.abs(rect.width - width) > .5) {
+            clipsElement.style.removeProperty("min-height");
+            height = 0;
+            rect = clipsElement.getBoundingClientRect();
+        }
+        width = rect.width;
+        var next = Math.ceil(rect.height);
+        if (next > height) {
+            height = next;
+            clipsElement.style.minHeight = height + "px";
+        }
+        resetHeight = false;
+    }
+    function value() {
+        var text = null, tooltip = spellf(Math.round(clips));
+        if (milestoneFlag < 15){
+            text = Math.ceil(clips).toLocaleString("en-US", { maximumFractionDigits: 0 });
+            }
+
+        if (milestoneFlag === 15 && dismantle ==0){
+            text = "29,999,999,999,999,900,000,000,000,000,000,000,000,000,000,000,000,000,000";
+            tooltip = "29.9 septendecillion";
+            }
+
+        if (dismantle === 1){
+            text = "29,999,999,999,999,999,999,999,999,999,999,999,999,000,000,000,000,000,000";
+            tooltip = "29.9 septendecillion";
+            }
+
+        if (dismantle === 2){
+            text = "29,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,000,000,000";
+            tooltip = "29.9 septendecillion";
+            }
+
+        if (dismantle === 3){
+            text = "29,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,900";
+            tooltip = "29.9 septendecillion";
+            }
+
+        if (dismantle >=4){
+
+        if (finalClips<10){
+            text = "29,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,"+"90"+finalClips;
+            tooltip = "29.9 septendecillion";
+            } else if (finalClips>9 && finalClips<100) {
+            text = "29,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,"+"9"+finalClips;
+            tooltip = "29.9 septendecillion";
+            } else if (finalClips===100) {
+            text = "30,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000";
+            tooltip = "30.0 septendecillion";
+            }
+
+        }
+
+        return { text: text, tooltip: tooltip };
+    }
+    function cancel() {
+        if (timer !== null) { clearTimeout(timer); timer = null; }
+        if (frame !== null) { cancelAnimationFrame(frame); frame = null; }
+    }
+    function flush() {
+        cancel();
+        var current = value();
+        var changed = write(clipsElement, current.text);
+        write(clipCountCrunchedElement, current.tooltip);
+        lastTime = now();
+        lastClips = clips; lastMilestone = milestoneFlag;
+        lastDismantle = dismantle; lastFinal = finalClips;
+        if (changed || resetHeight) stabilize();
+    }
+    function request() {
+        // Ending strings and the final manual clips must never wait behind an older production frame.
+        if (lastTime === -Infinity || typeof window.requestAnimationFrame !== "function" ||
+            (milestoneFlag >= 15 && milestoneFlag !== lastMilestone) ||
+            dismantle !== lastDismantle || finalClips !== lastFinal) {
+            flush(); return;
+        }
+        if ((clips === lastClips && milestoneFlag === lastMilestone) || timer !== null || frame !== null) return;
+        var remaining = 100 - (now() - lastTime);
+        function queue() {
+            timer = null;
+            frame = requestAnimationFrame(function () { frame = null; flush(); });
+        }
+        if (remaining > 0) timer = setTimeout(queue, remaining);
+        else queue();
+    }
+    function resetLayout() {
+        resetHeight = true;
+        if (typeof window.requestAnimationFrame !== "function") { stabilize(); return; }
+        if (layoutFrame === null) layoutFrame = requestAnimationFrame(function () {
+            layoutFrame = null; stabilize();
+        });
+    }
+    function reset() { resetHeight = true; flush(); }
+    btnMakePaperclipElement.addEventListener("click", flush);
+    if (typeof window.addEventListener === "function") {
+        window.addEventListener("resize", function () {
+            if (viewportWidth !== window.innerWidth) {
+                viewportWidth = window.innerWidth; resetLayout();
+            }
+        });
+        document.addEventListener("paperclips:layout", resetLayout);
+    }
+    return { request: request, reset: reset };
+})();
+
+
 // Wire --------------------------------------------------------
 
 function adjustWirePrice(){
@@ -1046,7 +1178,7 @@ function buttonUpdate(){
         swarmSliderDivElement.style.display="none";
     }
     
-    clipCountCrunchedElement.innerHTML = spellf(Math.round(clips));
+    clipCounterDisplay.request();
     
 if (autoTourneyFlag==1) {
     autoTourneyStatusDivElement.style.display="";
@@ -2349,9 +2481,6 @@ function clipClick(number){
         nanoWireElement.innerHTML = spellf(wire);        
     }    
         
-    if (milestoneFlag < 15){
-        clipsElement.innerHTML = formatWithCommas(Math.ceil(clips), 0);  //m@ todo fixed the thing that you fucked up where you made the tool tip of crunched not be in spelled numbers
-        }    
         wireElement.innerHTML = formatWithCommas(wire);
         unsoldClipsElement.innerHTML = formatWithCommas(unsoldClips, 0);
     }
@@ -2359,6 +2488,7 @@ function clipClick(number){
     if (dismantle>=4){
     transWireElement.innerHTML = formatWithCommas(wire);
     }
+    clipCounterDisplay.request();
     
 }
     
@@ -3112,45 +3242,8 @@ function updateStats(){
     }
     
     
-    if (milestoneFlag < 15){
-        clipsElement.innerHTML = formatWithCommas(Math.ceil(clips), 0);
-        }
-    
-    if (milestoneFlag === 15 && dismantle ==0){
-        clipsElement.innerHTML = "29,999,999,999,999,900,000,000,000,000,000,000,000,000,000,000,000,000,000";
-        clipCountCrunchedElement.innerHTML = "29.9 septendecillion"
-        }
-    
-    if (dismantle === 1){
-        clipsElement.innerHTML = "29,999,999,999,999,999,999,999,999,999,999,999,999,000,000,000,000,000,000";
-        clipCountCrunchedElement.innerHTML = "29.9 septendecillion"
-        }
-    
-    if (dismantle === 2){
-        clipsElement.innerHTML = "29,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,000,000,000";
-        clipCountCrunchedElement.innerHTML = "29.9 septendecillion"
-        }
-    
-    if (dismantle === 3){
-        clipsElement.innerHTML = "29,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,900";
-        clipCountCrunchedElement.innerHTML = "29.9 septendecillion"
-        }
-    
-    if (dismantle >=4){
-        
-    if (finalClips<10){
-        clipsElement.innerHTML = "29,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,"+"90"+finalClips;
-        clipCountCrunchedElement.innerHTML = "29.9 septendecillion"
-        } else if (finalClips>9 && finalClips<100) {
-        clipsElement.innerHTML = "29,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,999,"+"9"+finalClips;
-        clipCountCrunchedElement.innerHTML = "29.9 septendecillion"
-        } else if (finalClips===100) {
-        clipsElement.innerHTML = "30,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000";
-        clipCountCrunchedElement.innerHTML = "30.0 septendecillion"
-        }
-    
-    }
-    
+    clipCounterDisplay.request();
+
     clipmakerRateElement.innerHTML = formatWithCommas(Math.round(clipRate));
     if (humanFlag===1){
         clipmakerRate2Element.innerHTML = formatWithCommas(clipRate);
@@ -4692,6 +4785,7 @@ function refresh() {
     }
     
     
+    clipCounterDisplay.reset();
 }
 
 // SAVES AND LOADS

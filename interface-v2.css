@@ -49,12 +49,12 @@ hr.short { width: 100%; }
 #saveStatus { grid-column: 1 / -1; max-width: 440px; font-size: 14px; overflow-wrap: anywhere; }
 #saveStatus:empty { display: none; }
 #cover { position: fixed; inset: 0; z-index: 10; background: var(--paper); }
-.overview { display: grid; grid-template-columns: 1.25fr 1fr; gap: 32px; padding: 12px 0 32px; }
-#topDiv { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.overview { align-items: start; display: grid; grid-template-columns: 1.25fr 1fr; gap: 32px; padding: 12px 0 32px; }
+#topDiv { display: flex; flex-direction: column; justify-content: flex-start; min-width: 0; }
 #prestigeDiv { font: 12px/1.6 Consolas, monospace; color: var(--muted); padding: 4px 0; }
-.clip-count { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 16px; margin: 4px 0 16px; font-size: clamp(40px, 7vw, 104px); line-height: 1.1; letter-spacing: -.055em; }
-#clips { max-width: 100%; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-.clip-unit { font-size: .47em; letter-spacing: -.03em; white-space: nowrap; }
+.clip-count { display: block; margin: 4px 0 16px; font-size: clamp(40px, 7vw, 104px); line-height: 1.1; letter-spacing: -.055em; }
+#clips { display: block; width: 100%; max-width: 100%; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.clip-unit { display: block; font-size: .47em; letter-spacing: -.03em; white-space: nowrap; }
 #btnMakePaperclip { width: 100%; min-height: 64px; font-size: 26px; color: white; background: var(--red); border-color: var(--red); }
 #btnMakePaperclip:hover:enabled { background: #b5261d; }
 #btnMakePaperclip:disabled { color: #eee; background: #ad706b; border-color: #ad706b; }
@@ -212,6 +212,7 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 310 / 150; bac
   .mobile-ui .metric-rate { background: #fff0b3; }
   .mobile-ui .metric-label { display: block; font-size: 16px; }
   .mobile-ui .metric-value { display: block; font-size: 24px; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .mobile-ui :is(.metric-rate, .metric-stock) .metric-value { min-height: 3.75em; }
   .mobile-ui .metric-secondary { padding: 6px 0 0; border: 0; }
   .mobile-ui .metric-secondary .metric-value { font-size: 16px; line-height: 1.4; }
   .mobile-ui .mobile-panels { display: block; }

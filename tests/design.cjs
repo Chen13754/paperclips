@@ -395,8 +395,11 @@ const state = page => page.evaluate(() => ({ native: getSaveSnapshot(), prestige
         assert.equal(await manage.locator('#btnBatteryReboot').isVisible(), false);
         const productionLink = manage.locator('[data-detail="production-detail"]:visible').first();
         await productionLink.scrollIntoViewIfNeeded(); await pauseFrame(manage);
-        const consoleScroll = await manage.evaluate(() => scrollY);
+        // Playwright may scroll again to clear the taller sticky metrics before clicking.
+        // Record the actual position at pointerdown, which is what the view should restore.
+        await productionLink.evaluate(node => node.addEventListener('pointerdown', () => { window.__consoleScroll = scrollY; }, { once: true }));
         await productionLink.click();
+        const consoleScroll = await manage.evaluate(() => window.__consoleScroll);
         assert.equal(await manage.locator('#mobile-heading-production-detail').textContent(), '生产详情');
         assert.equal(await manage.locator('#btnMakeHarvester').isVisible(), false);
         assert(await manage.locator('#btnMakePaperclip').isVisible(), 'manual crafting remains accessible during automated phases');
