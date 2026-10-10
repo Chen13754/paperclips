@@ -3,7 +3,7 @@
     <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="interface-v2.css?v=restart-warning-1" />
+        <link rel="stylesheet" type="text/css" href="interface-v2.css?v=manual-1" />
 <title>回形针 - Paperclips</title>
     </head>
     
@@ -875,12 +875,32 @@
     <p class="settings-note">运行时间按本周目的游戏计时计算，不含离线时间。</p>
     <label class="settings-toggle"><input type="checkbox" id="showNumberHints" checked>显示数值说明（问号）</label>
     <p class="settings-note">此开关仅在本次页面打开期间生效。</p>
-    <button type="button" id="openResourceBoosts">资源增益 →</button>
+    <div class="settings-entries">
+      <button type="button" id="openManual">游戏说明书 →</button>
+      <button type="button" id="openResourceBoosts">资源增益 →</button>
+    </div>
     <section class="settings-restart" aria-labelledby="restartLabel">
       <h3 id="restartLabel">从头开始</h3>
       <p class="settings-note">清除当前进度和全部周目加成，重新体验游戏。</p>
       <button type="button" id="openRestart" class="destructive">从头开始…</button>
     </section>
+  </section>
+  <section id="gameManual" hidden aria-label="游戏说明书">
+    <div class="manual-actions">
+      <button type="button" id="manualToSettings">← 返回设置</button>
+      <button type="button" id="manualBack">← 返回上级</button>
+    </div>
+    <div class="manual-search">
+      <label for="manualSearch">搜索说明书</label>
+      <div><input type="search" id="manualSearch" placeholder="名称、别名或问题" autocomplete="off"><button type="button" id="manualClear">清空</button></div>
+    </div>
+    <label class="settings-toggle"><input type="checkbox" id="manualFull">显示完整百科（包含未解锁内容和结局）</label>
+    <p id="manualVisibility" class="manual-meta"></p>
+    <nav id="manualBreadcrumbs" aria-label="阅读路径"></nav>
+    <div class="manual-layout">
+      <nav id="manualDirectory" aria-label="说明书章节"></nav>
+      <div id="manualBody"></div>
+    </div>
   </section>
   <section id="boostWarning" hidden aria-labelledby="boostWarningTitle">
     <h3 id="boostWarningTitle">使用前请注意</h3>
@@ -914,13 +934,15 @@
 </div>
 <footer class="site-footer"><span>游戏作者： <strong>Frank Lantz</strong></span>
 <span><a href="https://www.decisionproblem.com/paperclips/">原作</a> / <a href="https://github.com/g1tyx/paperclips">中文版来源</a></span></footer>
-<script src="zh.js?v=restart-warning-1"></script>
-        <script type="text/javascript" src="combat-v3.js?v=restart-warning-1"></script>
+<script src="zh.js?v=manual-1"></script>
+        <script type="text/javascript" src="combat-v3.js?v=manual-1"></script>
         <script type="text/javascript" src="globals-v3.js"></script>      
-        <script type="text/javascript" src="projects-v3.js?v=restart-warning-1"></script>
-<script type="text/javascript" src="main-v3.js?v=restart-warning-1"></script>
-<script src="save-files.js?v=restart-warning-1"></script>
-<script src="mobile-ui.js?v=restart-warning-1"></script>
-<script src="settings.js?v=restart-warning-1"></script>
+        <script type="text/javascript" src="projects-v3.js?v=manual-1"></script>
+<script type="text/javascript" src="main-v3.js?v=manual-1"></script>
+<script src="save-files.js?v=manual-1"></script>
+<script src="mobile-ui.js?v=manual-1"></script>
+<script src="manual-content.js?v=manual-1"></script>
+<script src="manual.js?v=manual-1"></script>
+<script src="settings.js?v=manual-1"></script>
     </body>
 </html>

@@ -1,7 +1,7 @@
 name: Publish game to GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [main, 'check/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,7 +11,37 @@ concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
+  checks:
+    runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/playwright
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --cache .cache/npm --no-audit --no-fund
+      - run: npm test
+      - name: Install isolated test browser
+        run: |
+          node node_modules/playwright-core/cli.js install chromium
+          node -e "console.log('PAPERCLIPS_BROWSER=' + require('playwright-core').chromium.executablePath())" >> "$GITHUB_ENV"
+      - run: npm run test:manual
+      - run: npm run test:browser
+      - run: npm run test:design
+      - run: npm run test:settings
+      - run: npm run test:counter
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-checks
+          path: test-results/
+          retention-days: 7
   deploy:
+    needs: checks
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

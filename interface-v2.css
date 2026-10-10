@@ -28,10 +28,10 @@ button, select {
   background: transparent;
   vertical-align: middle;
 }
-button { cursor: pointer; line-height: 1.35; font-weight: 600; }
+button { cursor: pointer; line-height: 1.35; font-weight: 600; background: #fffef9; box-shadow: 0 2px 0 rgb(21 21 21 / .18); }
 button:hover:enabled { background: #e7e7e0; }
-button:active:enabled { background: var(--ink); color: var(--paper); }
-button:disabled { cursor: default; color: #757570; background: #e8e8e2; border-color: #cecec7; }
+button:active:enabled { background: var(--ink); color: var(--paper); box-shadow: none; }
+button:disabled { cursor: default; color: #686863; background: #e8e8e2; border-color: #cecec7; box-shadow: none; }
 :where(button, a, select, input, [tabindex]):focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 select { padding-right: 24px; }
 [hidden] { display: none !important; }
@@ -57,7 +57,7 @@ hr.short { width: 100%; }
 .clip-unit { display: block; font-size: .47em; letter-spacing: -.03em; white-space: nowrap; }
 #btnMakePaperclip { width: 100%; min-height: 64px; font-size: 26px; color: white; background: var(--red); border-color: var(--red); }
 #btnMakePaperclip:hover:enabled { background: #b5261d; }
-#btnMakePaperclip:disabled { color: #eee; background: #ad706b; border-color: #ad706b; }
+#btnMakePaperclip:disabled { color: #686863; background: #e8e8e2; border-color: #cecec7; }
 #consoleDiv { min-width: 0; min-height: 210px; padding: 20px; background: #090909; color: #fff; overflow-wrap: anywhere; display: flex; flex-direction: column; justify-content: flex-end; }
 p.console, p.consoleOld { font: 17px/1.7 Consolas, "Lucida Console", monospace; margin: 0; }
 p.consoleOld { color: #a0a09b; }
@@ -101,9 +101,9 @@ p.hypnoDrone { font-size: clamp(32px, 8vw, 120px); line-height: 1.15; margin: 0;
 #swarmSliderDiv { display: flex; align-items: center; gap: 10px; margin: 16px 0; }
 #swarmSlider { flex: 1; min-width: 0; }
 .slider { width: 100%; min-height: 44px; margin: 0; accent-color: var(--blue); vertical-align: middle; }
-.projectButton { display: block; width: 100%; min-height: 86px; height: auto; text-align: left; font-weight: 400; line-height: 1.65; padding: 12px 14px; margin: 0 0 12px; background: #e4ebfa; border-color: #b5c9ee; overflow-wrap: anywhere; }
+.projectButton { display: block; width: 100%; min-height: 86px; height: auto; text-align: left; font-weight: 400; line-height: 1.65; padding: 12px 14px; margin: 0 0 12px; background: #e4ebfa; border-color: #6884b7; overflow-wrap: anywhere; }
 .projectButton:hover:enabled { background: #d5e2fc; border-color: var(--blue); }
-.projectButton:disabled { background: #e5e5df; color: #686863; }
+.projectButton:disabled { background: #e5e5df; color: #686863; border-color: #cecec7; }
 #rightColumn { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; align-items: start; }
 #rightColumn > *, .module-group > * { min-width: 0; }
 .module-group:not(:has(> :not([style*="display: none"]))) { display: none; }
@@ -312,8 +312,50 @@ html, body, button, a, select, input, summary { touch-action: manipulation; }
 #boostStatus:empty { display: none; }
 .number-help {
   position: relative; width: 44px; min-width: 44px; height: 44px; min-height: 44px;
-  padding: 0; margin: -8px 0; border: 0; color: var(--blue);
+  padding: 0; margin: -8px 0; border: 0; color: var(--blue); background: transparent; box-shadow: none;
   font-size: 16px; line-height: 44px; font-weight: 700; vertical-align: middle;
+}
+
+/* Documentation shares the settings dialog, without moving any game modules. */
+.settings-entries { display: grid; gap: 12px; }
+#openManual { width: 100%; border-color: var(--blue); color: var(--blue); text-align: left; }
+#settingsDialog.manual-open { width: min(1000px, calc(100% - 24px)); }
+.manual-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.manual-search { margin-bottom: 14px; }
+.manual-search label { display: block; font-weight: 600; margin-bottom: 6px; }
+.manual-search > div { display: flex; gap: 8px; }
+#manualSearch { width: 100%; min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid var(--ink); border-radius: 0; color: var(--ink); background: #fffef9; }
+#manualClear { flex-shrink: 0; }
+.manual-meta { color: var(--muted); margin: 8px 0 14px; }
+#manualBreadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; border-block: 1px solid var(--line); padding: 8px 0; margin: 16px 0 24px; overflow-wrap: anywhere; }
+.manual-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 28px; align-items: start; }
+#manualDirectory { position: sticky; top: 68px; max-height: calc(100dvh - 130px); overflow-y: auto; padding: 0 8px 4px 0; }
+.manual-nav { display: block; width: 100%; text-align: left; border: 0; border-left: 3px solid transparent; box-shadow: none; background: transparent; margin-bottom: 4px; padding: 10px 8px; }
+.manual-subnav { font-weight: 400; padding-left: 20px; }
+.manual-nav[aria-current] { background: #e4ebfa; border-left-color: var(--blue); color: var(--blue); }
+#manualBody { min-width: 0; overflow-wrap: anywhere; }
+#manualHeading { font-size: 24px; line-height: 1.4; margin: 0 0 18px; }
+#manualBody > p { margin-bottom: 18px; line-height: 1.75; }
+.manual-intro { padding: 12px 14px; border-left: 4px solid var(--blue); background: #e4ebfa; }
+.manual-card { display: block; width: 100%; text-align: left; margin: 0 0 14px; padding: 14px; line-height: 1.65; }
+.manual-card strong, .manual-summary, .manual-card .manual-meta { display: block; }
+.manual-summary { margin-top: 6px; font-weight: 400; }
+.manual-card .manual-meta { margin: 0 0 6px; font-weight: 400; }
+.manual-details { border-block: 1px solid var(--line); margin: 24px 0; padding: 6px 0; }
+.manual-details summary { min-height: 44px; padding: 8px 0; cursor: pointer; font-weight: 600; }
+.manual-details p { margin: 12px 0; line-height: 1.75; }
+.manual-related { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 18px; }
+.manual-related h4 { margin: 0 0 8px; }
+.manual-link { background: transparent; border: 0; box-shadow: none; color: var(--blue); padding: 8px 0; font-weight: 400; text-decoration: underline; text-underline-offset: 4px; text-align: left; }
+.manual-related .manual-link { display: block; }
+#btnQcompute:disabled { color: #686863; background: #e8e8e2; border-color: #cecec7; }
+@media (max-width: 699px) {
+  .manual-layout { display: block; }
+  #manualDirectory { display: none; }
+  .manual-actions { gap: 8px; }
+  .manual-actions button { flex: 1; padding-inline: 8px; }
+  #manualHeading { font-size: 22px; }
+  .mobile-ui .mobile-detail-link { background: transparent; box-shadow: none; }
 }
 .number-help:hover:enabled { background: transparent; }
 .number-help::before { content: ""; position: absolute; width: 22px; height: 22px; border: 1px solid currentColor; border-radius: 50%; left: 11px; top: 11px; }

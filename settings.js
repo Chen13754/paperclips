@@ -95,7 +95,7 @@
     const dialog = byId('settingsDialog'), opener = byId('openSettings');
     if (!dialog || !opener) return;
     const overview = byId('settingsOverview'), boosts = byId('resourceBoosts'), list = byId('boostList');
-    const warning = byId('boostWarning'), restart = byId('restartConfirmation');
+    const warning = byId('boostWarning'), restart = byId('restartConfirmation'), manual = byId('gameManual');
     let timer = null, lastKeys = '', boostWarningAccepted = false;
     const rows = new Map();
     const make = (tag, className, text) => {
@@ -106,6 +106,7 @@
     };
     const setText = (node, text) => { if (node.textContent !== text) node.textContent = text; };
     function render() {
+        if (!manual.hidden) game.PaperclipManual.refresh();
         const stats = summary();
         if (!overview.hidden) {
             if (!byId('gameSummary').children.length) {
@@ -149,9 +150,12 @@
         }
     }
     function showView(view, focus) {
-        for (const section of [overview, boosts, warning, restart]) section.hidden = section !== view;
-        byId('settingsTitle').textContent = view === overview ? '设置' : view === restart ? '从头开始' : '资源增益';
+        if (!manual.hidden) game.PaperclipManual.leave();
+        for (const section of [overview, boosts, warning, restart, manual]) section.hidden = section !== view;
+        byId('settingsTitle').textContent = view === overview ? '设置' : view === restart ? '从头开始' : view === manual ? '游戏说明书' : '资源增益';
+        dialog.classList.toggle('manual-open', view === manual);
         dialog.scrollTop = 0;
+        if (view === manual) game.PaperclipManual.open();
         render();
         if (focus) byId(focus).focus({ preventScroll: true });
     }
@@ -165,12 +169,17 @@
         timer = setInterval(render, 1000);
     });
     byId('closeSettings').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => { clearInterval(timer); timer = null; opener.focus({ preventScroll: true }); });
+    dialog.addEventListener('close', () => {
+        if (!manual.hidden) game.PaperclipManual.leave();
+        clearInterval(timer); timer = null; opener.focus({ preventScroll: true });
+    });
     dialog.addEventListener('click', event => {
         const rect = dialog.getBoundingClientRect();
         if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right ||
             event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
     });
+    byId('openManual').addEventListener('click', () => showView(manual, 'manualHeading'));
+    byId('manualToSettings').addEventListener('click', () => showView(overview, 'openManual'));
     byId('openResourceBoosts').addEventListener('click', () => {
         if (boostWarningAccepted) enterBoosts();
         else showView(warning, 'cancelBoostWarning');
