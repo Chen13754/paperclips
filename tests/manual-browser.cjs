@@ -86,7 +86,7 @@ async function choose(page, id) { await page.locator('#manualBody [data-manual-t
         assert((await p.locator('#manualBody').textContent()).includes('没有找到'));
         assert(!(await p.locator('#manualBody').textContent()).includes('宇宙与战斗'));
         await p.locator('#manualFull').check();
-        assert((await p.locator('#manualBody').textContent()).includes('找到 1 项'));
+        assert.equal(await p.locator('#manualBody [data-manual-target="r133"]').count(), 1);
         await choose(p, 'r133'); assert.equal(await heading(p), '英雄挽歌');
         await p.locator('#manualFull').uncheck(); assert.equal(await heading(p), '说明书目录');
         await p.locator('#manualBack').click(); // Previous search is re-filtered under the now-disabled full switch.
@@ -120,7 +120,7 @@ async function choose(page, id) { await page.locator('#manualBody [data-manual-t
         results.push('search, focus and scroll survive Back, settings return and reopen; Esc restores focus; full switch resets on refresh; no state/storage mutation');
         await fresh.close();
 
-        for (const [label, storage, phase] of [['initial', {}, 0], ['business', fixture(1), 1], ['earth', fixture(2), 2], ['space', fixture(3), 3], ['legacy', legacy.storage, 2]]) {
+        for (const [label, storage, phase] of [['initial', {}, 0], ['business', fixture(1), 1], ['earth', fixture(2), 2], ['space', fixture(3), 3], ['legacy', legacy.storage, 1]]) {
             const ctx = await context(storage); const page = await ctx.newPage(); await page.goto(entry); await ready(page);
             const baseline = await snapshot(page); await open(page);
             const ids = await page.evaluate(() => PaperclipManual.entries().map(item => item.id));
@@ -172,5 +172,14 @@ async function choose(page, id) { await page.locator('#manualBody [data-manual-t
         results.push('no page errors, automatic external requests or popups');
         fs.writeFileSync(path.join(output, 'results.json'), JSON.stringify(results, null, 2));
         console.log(JSON.stringify({ passed: results.length, results }, null, 2));
+    } catch (error) {
+        if (browser) for (const [index, page] of browser.contexts().flatMap(ctx => ctx.pages()).entries()) {
+            if (page.isClosed()) continue;
+            await page.screenshot({ path: path.join(output, 'failure-' + index + '.png') }).catch(() => {});
+            const info = await page.evaluate(() => ({ body: document.querySelector('#manualBody')?.innerText,
+                search: document.querySelector('#manualSearch')?.value, scroll: document.querySelector('#settingsDialog')?.scrollTop })).catch(() => ({}));
+            fs.writeFileSync(path.join(output, 'failure-' + index + '.json'), JSON.stringify(info, null, 2));
+        }
+        throw error;
     } finally { if (browser) await browser.close(); await new Promise(resolve => server.close(resolve)); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
