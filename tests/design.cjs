@@ -7,7 +7,7 @@ const { execFileSync } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
 const output = path.join(root, 'test-results', 'design');
 fs.mkdirSync(output, { recursive: true });
-const temp = path.join(root, '.cache', 'design-browser');
+const temp = path.join(root, '.cache', 'design');
 fs.mkdirSync(temp, { recursive: true });
 process.env.TEMP = process.env.TMP = process.env.TMPDIR = temp;
 const { chromium } = require('playwright-core');

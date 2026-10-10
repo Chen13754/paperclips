@@ -352,6 +352,7 @@ html, body, button, a, select, input, summary { touch-action: manipulation; }
 @media (max-width: 699px) {
   .manual-layout { display: block; }
   #manualDirectory { display: none; }
+  #manualBreadcrumbs .manual-current { display: none; }
   .manual-actions { gap: 8px; }
   .manual-actions button { flex: 1; padding-inline: 8px; }
   #manualHeading { font-size: 22px; }

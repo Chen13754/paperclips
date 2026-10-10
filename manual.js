@@ -115,6 +115,7 @@
     const main = byId('manualBody'), side = byId('manualDirectory'), crumbs = byId('manualBreadcrumbs');
     const input = byId('manualSearch'), fullSwitch = byId('manualFull');
     const state = { route: { kind: 'root' }, query: '', full: false, scroll: 0, sideScroll: 0, history: [] };
+    const expandedDetails = new Set();
     let signature = '', opened = false;
     const make = (tag, className, text) => {
         const node = document.createElement(tag);
@@ -166,7 +167,10 @@
             crumbs.append(make('span', '', '/'), button(chapter.title, chapter.id, () => go({ kind: 'chapter', chapter: chapter.id }), 'manual-link'));
             const group = current?.group || state.route.group;
             if (group) crumbs.append(make('span', '', '/'), button(group, group, () => go({ kind: 'group', chapter: chapter.id, group }), 'manual-link'));
-            if (current) crumbs.append(make('span', '', '/'), make('span', '', current.title));
+            if (current) {
+                const label = make('span', 'manual-current', '/ ' + current.title);
+                label.setAttribute('aria-current', 'page'); crumbs.append(label);
+            }
         }
         if (state.query) crumbs.append(make('span', '', '/ 搜索结果'));
         side.replaceChildren();
@@ -195,6 +199,10 @@
             for (const text of current.body) main.append(make('p', '', text));
             if (current.details.length) {
                 const details = make('details', 'manual-details'); details.append(make('summary', '', '数值细节'));
+                details.open = expandedDetails.has(current.id);
+                details.addEventListener('toggle', () => {
+                    if (details.open) expandedDetails.add(current.id); else expandedDetails.delete(current.id);
+                });
                 for (const text of current.details) details.append(make('p', '', text));
                 main.append(details);
             }

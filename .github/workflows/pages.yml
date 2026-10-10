@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/playwright
+      FONTCONFIG_FILE: ${{ github.workspace }}/.cache/fonts.conf
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,6 +29,20 @@ jobs:
         run: |
           node node_modules/playwright-core/cli.js install chromium
           node -e "console.log('PAPERCLIPS_BROWSER=' + require('playwright-core').chromium.executablePath())" >> "$GITHUB_ENV"
+      - name: Prepare Chinese font for screenshots
+        run: |
+          mkdir -p .cache/fonts .cache/fontconfig
+          curl --fail --location 'https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf' -o .cache/fonts/NotoSansSC.ttf
+          cat > "$FONTCONFIG_FILE" <<EOF
+          <?xml version="1.0"?>
+          <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+          <fontconfig>
+            <include>/etc/fonts/fonts.conf</include>
+            <dir>$GITHUB_WORKSPACE/.cache/fonts</dir>
+            <cachedir>$GITHUB_WORKSPACE/.cache/fontconfig</cachedir>
+          </fontconfig>
+          EOF
+          fc-match ':lang=zh-cn'
       - run: npm run test:manual
       - run: npm run test:browser
       - run: npm run test:design

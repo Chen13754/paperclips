@@ -6,7 +6,7 @@ const http = require('node:http');
 const { game } = require('./game.cjs');
 const root = path.resolve(__dirname, '..');
 const output = path.join(root, 'test-results', 'settings');
-const temp = path.join(root, '.cache', 'settings-browser');
+const temp = path.join(root, '.cache', 'settings'); // Keep Linux Chromium's socket path below its length limit.
 fs.mkdirSync(output, { recursive: true }); fs.mkdirSync(temp, { recursive: true });
 process.env.TEMP = process.env.TMP = process.env.TMPDIR = temp;
 const { chromium } = require('playwright-core');

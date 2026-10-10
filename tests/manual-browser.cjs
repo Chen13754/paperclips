@@ -6,7 +6,7 @@ const http = require('node:http');
 const { game } = require('./game.cjs');
 const legacy = require('./fixtures/legacy-save-v1.json');
 const root = path.resolve(__dirname, '..');
-const output = path.join(root, 'test-results', 'manual'), temp = path.join(root, '.cache', 'manual-browser');
+const output = path.join(root, 'test-results', 'manual'), temp = path.join(root, '.cache', 'manual');
 fs.mkdirSync(output, { recursive: true }); fs.mkdirSync(temp, { recursive: true });
 process.env.TEMP = process.env.TMP = process.env.TMPDIR = temp;
 const { chromium } = require('playwright-core');
@@ -77,6 +77,8 @@ async function choose(page, id) { await page.locator('#manualBody [data-manual-t
         await p.locator('#manualBody [data-manual-target="sales"]').click();
         await p.locator('#manualBody summary').click();
         assert(await p.locator('#manualBody details').getAttribute('open') !== null);
+        await p.locator('#closeSettings').click(); await open(p);
+        assert(await p.locator('#manualBody details').getAttribute('open') !== null, 'expanded details survive reopen');
         await p.locator('#manualBack').click(); assert.equal(await heading(p), '从第一枚回形针开始');
         await p.locator('#manualBack').click(); assert.equal(await heading(p), '开始游玩');
         await p.locator('#manualBack').click(); assert.equal(await heading(p), '快速入门');

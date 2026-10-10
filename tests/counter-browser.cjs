@@ -7,7 +7,7 @@ const { execFileSync } = require('node:child_process');
 const { game } = require('./game.cjs');
 const root = path.resolve(__dirname, '..');
 const output = path.join(root, 'test-results', 'counter');
-const temp = path.join(root, '.cache', 'counter-browser');
+const temp = path.join(root, '.cache', 'counter');
 fs.mkdirSync(output, { recursive: true }); fs.mkdirSync(temp, { recursive: true });
 process.env.TEMP = process.env.TMP = process.env.TMPDIR = temp;
 const { chromium } = require('playwright-core');
