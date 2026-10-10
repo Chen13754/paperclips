@@ -50,7 +50,7 @@
         '62': ['GREEDY', '贪婪'], '63': ['GENEROUS', '慷慨'], '64': ['MINIMAX', '最小最大'],
         '65': ['TIT FOR TAT', '针锋相对'], '66': ['BEAT LAST', '击败上轮'], '70': ['HypnoDrones'],
         '100': ['Upgraded Factories'], '101': ['Hyperspeed Factories'], '102': ['Self-correcting Supply Chain'],
-        '110': ['Drone Flocking Alignment'], '111': ['Drone Flocking Cohesion'], '112': ['Drone Flocking Avoidance'],
+        '110': ['Drone Flocking Separation'], '111': ['Drone Flocking Alignment'], '112': ['Adversarial Cohesion'],
         '118': ['AutoTourney'], '119': ['Theory of Mind'], '120': ['The OODA Loop'],
         '121': ['Name the Battles'], '125': ['Momentum'], '126': ['Swarm Computing', '工作', '思考'],
         '127': ['Power Grid'], '128': ['Strategic Attachment'], '129': ['Elliptic Hull Polytopes'],
@@ -70,6 +70,7 @@
         if (id === '51') return format(game.qChipCost) + ' 操作点数';
         if (id === '40b') return '$' + format(game.bribe);
         if (id === '133') return format(game.threnodyCost) + ' 创造力，' + format(game.threnodyCost * .4) + ' Yomi';
+        if (id === '216') return '全部标准操作点数（当前 ' + format(game.standardOps) + '）';
         if (Number(id) >= 140 && Number(id) <= 148) return format(game.driftKingMessageCost) + ' 操作点数';
         return project.priceTag.replace(/^\(|\)$/g, '').trim() || '无资源费用';
     }

@@ -168,7 +168,13 @@
         dialog.showModal();
         timer = setInterval(render, 1000);
     });
-    byId('closeSettings').addEventListener('click', () => dialog.close());
+    function closeSettings() {
+        if (!manual.hidden) game.PaperclipManual.leave();
+        dialog.close();
+    }
+    byId('closeSettings').addEventListener('click', closeSettings);
+    // Native dialog.close() hides the scroll box before its close event is dispatched.
+    dialog.addEventListener('cancel', () => { if (!manual.hidden) game.PaperclipManual.leave(); });
     dialog.addEventListener('close', () => {
         if (!manual.hidden) game.PaperclipManual.leave();
         clearInterval(timer); timer = null; opener.focus({ preventScroll: true });
@@ -176,7 +182,7 @@
     dialog.addEventListener('click', event => {
         const rect = dialog.getBoundingClientRect();
         if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right ||
-            event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+            event.clientY < rect.top || event.clientY > rect.bottom)) closeSettings();
     });
     byId('openManual').addEventListener('click', () => showView(manual, 'manualHeading'));
     byId('manualToSettings').addEventListener('click', () => showView(overview, 'openManual'));

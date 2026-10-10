@@ -84,6 +84,8 @@ test('repeatable research fees are current after loading and titles remain stabl
     assert.equal(item('r133').title, '英雄挽歌');
     assert(item('r133').body[1].includes('28,000 Yomi'));
     assert.equal(item('r140').body[1], '费用：1 操作点数。');
+    assert(item('r216').body[1].includes('全部标准操作点数'));
+    assert(!item('r216').body[1].includes('null'));
 });
 
 test('manual model is read-only with old v1 storage, snapshot fields and all six keys unchanged', () => {
