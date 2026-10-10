@@ -136,3 +136,32 @@ test('documented additive clipper and multiplicative wire upgrades match native 
     effect('126'); assert.equal(g.swarmFlag, 1);
     effect('129'); assert.equal(g.project129.flag, 1);
 });
+
+test('documented swarm slider, gift generation and per-type drone boost match native branches', () => {
+    const g = manual();
+    Object.assign(g, { humanFlag: 0, swarmFlag: 1, powMod: 1, harvesterLevel: 10.7, wireDroneLevel: 10.7,
+        harvesterRate: 100, droneBoost: 2, availableMatter: 1e20, acquiredMatter: 0 });
+    g.sliderElement.value = 0; g.updateSwarm(); g.acquireMatter();
+    assert.equal(g.acquiredMatter, 40000); assert.equal(g.giftBitGenerationRate, 0);
+    g.acquiredMatter = 0; g.sliderElement.value = 100; g.updateSwarm(); g.acquireMatter();
+    assert.equal(g.acquiredMatter, 20000, 'the thinking extreme still processes materials at 1x');
+    assert.equal(g.giftBitGenerationRate, Math.log(Math.floor(21.4)));
+});
+
+test('documented probe exploration, resource cost, hazards and drift match native calculations', () => {
+    const g = manual();
+    Object.assign(g, { probeCount: 2.5, probeSpeed: 4, probeNav: 3, foundMatter: 0, availableMatter: 0, totalMatter: 1e40 });
+    g.exploreUniverse(); assert.equal(g.foundMatter, 2 * 1.75e18 * 4 * 3);
+    assert.equal(g.availableMatter, g.foundMatter);
+    Object.assign(g, { probeCount: 1e6, probeRep: 2, unusedClips: 1e22 });
+    const clips = g.unusedClips; g.spawnProbes();
+    assert.equal(g.probeCount, 1000100); assert.equal(g.unusedClips, clips - 100 * 1e17);
+    const hazard = 1e6 * .01 / (3 * Math.pow(4, 1.6) + 1);
+    Object.assign(g, { probeCount: 1e6, probeHaz: 4, probesLostHaz: 0 });
+    g.encounterHazards(); assert.equal(g.probesLostHaz, hazard);
+    g.project129.flag = 1; g.probeCount = 1e6; g.probesLostHaz = 0;
+    g.encounterHazards(); assert.equal(g.probesLostHaz, hazard * .5);
+    Object.assign(g, { probeCount: 1e6, probeTrust: 20, probesLostDrift: 0 });
+    g.drift(); assert.equal(g.probesLostDrift, Math.pow(20, 1.2));
+    const count = g.probeCount; g.project148.flag = 1; g.drift(); assert.equal(g.probeCount, count);
+});

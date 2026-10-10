@@ -100,6 +100,12 @@ async function choose(page, id) { await page.locator('#manualBody [data-manual-t
         await p.locator('#manualFull').check(); await p.locator('#manualSearch').fill('ＴＩＴ　ＦＯＲ　ＴＡＴ');
         assert(await p.locator('#manualBody [data-manual-target="r65"]').count());
         await p.locator('#manualSearch').fill('OODA'); assert(await p.locator('#manualBody [data-manual-target="r120"]').count());
+        await p.locator('#manualSearch').press('Enter'); assert(await p.locator('#settingsDialog').isVisible());
+        await p.locator('#manualBody [data-manual-target="r120"]').focus(); await p.keyboard.press('Enter');
+        assert.equal(await heading(p), 'OODA 循环'); await p.locator('#manualBack').focus(); await p.keyboard.press('Enter');
+        assert.equal(await p.locator('#manualSearch').inputValue(), 'OODA');
+        await p.locator('#closeSettings').focus(); await p.keyboard.press('Shift+Tab');
+        assert(await p.evaluate(() => document.querySelector('#settingsDialog').contains(document.activeElement)), 'keyboard focus remains in the dialog');
         results.push('hidden titles/categories/counts stay hidden; full switch, Chinese/English aliases, clear and empty results');
 
         await p.locator('#manualSearch').fill('操作点数');
