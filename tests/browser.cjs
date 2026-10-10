@@ -47,7 +47,11 @@ const stored = page => page.evaluate(keys => Object.fromEntries(keys.map(key => 
 
 async function ready(page) {
     await page.waitForFunction(() => window.PaperclipSaves && document.getElementById('cover').style.display === 'none');
-    await page.evaluate(() => window.__gameIntervals.forEach(clearInterval));
+    await page.evaluate(() => window.__gameIntervals.forEach((id, index) => {
+        // Freeze production/save timers, but let native research-button blinks finish.
+        // Stopping a 30ms blink midway leaves a button permanently hidden in the test.
+        if (window.__gameTimerCallbacks[index].delay !== 30) clearInterval(id);
+    }));
 }
 
 async function selectFile(page, file, accept) {

@@ -346,7 +346,7 @@ html, body, button, a, select, input, summary { touch-action: manipulation; }
 .manual-details p { margin: 12px 0; line-height: 1.75; }
 .manual-related { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 18px; }
 .manual-related h4 { margin: 0 0 8px; }
-.manual-link { background: transparent; border: 0; box-shadow: none; color: var(--blue); padding: 8px 0; font-weight: 400; text-decoration: underline; text-underline-offset: 4px; text-align: left; }
+.manual-link { min-width: 44px; background: transparent; border: 0; box-shadow: none; color: var(--blue); padding: 8px 0; font-weight: 400; text-decoration: underline; text-underline-offset: 4px; text-align: left; }
 .manual-related .manual-link { display: block; }
 #btnQcompute:disabled { color: #686863; background: #e8e8e2; border-color: #cecec7; }
 @media (max-width: 699px) {

@@ -144,11 +144,11 @@ async function choose(page, id) { await page.locator('#manualBody [data-manual-t
                     return { width: rect.width, left: rect.left, horizontal: node.scrollWidth > node.clientWidth + 1,
                         font: parseFloat(getComputedStyle(document.querySelector('#manualBody')).fontSize),
                         targets: [...node.querySelectorAll('button, summary, input[type="search"]')].filter(item => item.getClientRects().length)
-                            .map(item => ({ id: item.id, height: item.getBoundingClientRect().height })) };
+                            .map(item => ({ id: item.id, height: item.getBoundingClientRect().height, width: item.getBoundingClientRect().width })) };
                 });
                 assert(metrics.width <= width - 20 && metrics.left >= 10, `${label}/${width} dialog`);
                 assert(!metrics.horizontal, `${label}/${width} horizontal overflow`); assert(metrics.font >= 16);
-                for (const item of metrics.targets) assert(item.height >= 44, `${label}/${width}/${item.id}: ${item.height}`);
+                for (const item of metrics.targets) assert(item.height >= 44 && item.width >= 44, `${label}/${width}/${item.id}: ${item.width}×${item.height}`);
                 assert.equal(await page.locator('#manualDirectory').isVisible(), width >= 700);
                 await page.locator('#settingsDialog').evaluate(node => { node.scrollTop = node.scrollHeight; }); await pause(page);
                 assert(await page.locator('#closeSettings').isVisible());
